@@ -8,6 +8,7 @@
     "@theia/mini-browser": "1.58.1",
     "@theia/navigator": "1.58.1",
     "@theia/outline-view": "1.58.1",
+    "@theia/plugin-ext-vscode": "1.58.1",
     "@theia/preferences": "1.58.1",
     "@theia/workspace": "1.58.1",
     "CheckingApp": "0.0.0"
