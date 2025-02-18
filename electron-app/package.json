@@ -21,10 +21,31 @@
   "scripts": {
     "bundle": "yarn rebuild && theia build --mode development",
     "rebuild": "theia rebuild:electron --cacheRoot ..",
-    "start": "theia start",
+    "start": "theia start --plugins=local-dir:./plugins",
     "watch": "yarn rebuild && theia build --watch --mode development"
   },
   "theia": {
     "target": "electron"
+  },
+  "build": {
+    "appId": "com.example.theia",
+    "productName": "CheckingTool",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "lib/**/*",
+      "plugins/*",
+      "package.json"
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }

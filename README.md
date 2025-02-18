@@ -79,3 +79,22 @@ Publish packages with lerna to update versions properly across local packages, [
 
     npx lerna publish
 
+## Creating installer for CheckingApp
+
+Build the electron app
+
+    yarn build:electron
+    cd electron-app
+    yarn && yarn bundle
+
+Create the application installer.  The example for MacOS is:
+
+    cd electron-app    
+    yarn electron-builder --mac --universal
+
+Create the application installer.  The example for Windows is:
+
+    cd electron-app    
+    yarn electron-builder --win
+
+For Linux replace `--win` with `--linux deb`
