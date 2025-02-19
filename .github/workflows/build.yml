@@ -78,7 +78,14 @@ jobs:
           ls -als ./dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096      
-      
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.tests != 'skip' && runner.os == 'macOS'
+        name: Upload Mac installer
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ./dist/CheckingTool-*.deb
+
       - name: Make Mac Installer
         if: matrix.tests != 'skip' && runner.os == 'macOS'
         shell: bash
@@ -90,13 +97,13 @@ jobs:
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 
-
       - uses: actions/upload-artifact@v4
         if: matrix.tests != 'skip' && runner.os == 'macOS'
         name: Upload Mac installer
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: ./dist/CheckingTool-*.dmg
+
 
       - name: Make Windows Installer
         if: matrix.tests != 'skip' && runner.os == 'Windows'
@@ -108,3 +115,10 @@ jobs:
           ls -als ./dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.tests != 'skip' && runner.os == 'Windows'
+        name: Upload Mac installer
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ./dist/CheckingTool*.exe
