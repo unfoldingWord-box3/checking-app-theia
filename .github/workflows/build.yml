@@ -9,14 +9,24 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [20.x]
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          fetch-depth: 0 # To fetch all history for all branches and tags. (Will be required for caching with lerna: https://github.com/markuplint/markuplint/pull/111)
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Use Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
       - name: Read version and commit sha
         run: |
@@ -24,9 +34,13 @@ jobs:
           echo "APP_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_ENV
           echo "APP_NAME=$(node -p -e "require('./package.json').name")" >> $GITHUB_ENV
 
-      - name: Install yarn
-        run: npm i -g yarn
-      - run: yarn --version
-
-      - name: Setup app
-        run: yarn
+      - name: Build and package
+        shell: bash
+        run: |
+          yarn --skip-integrity-check --network-timeout 100000
+          yarn build:dev
+          yarn download:plugins
+          yarn package:applications:preview
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # https://github.com/microsoft/vscode-ripgrep/issues/9
