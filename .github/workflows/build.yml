@@ -1,0 +1,33 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+#    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Read version and commit sha
+        run: |
+          echo "HASH=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+          echo "APP_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_ENV
+          echo "APP_NAME=$(node -p -e "require('./package.json').name")" >> $GITHUB_ENV
+
+      - name: Install yarn
+        run: npm i -g yarn
+      - run: yarn --version
+
+      - name: Setup app
+        run: yarn
