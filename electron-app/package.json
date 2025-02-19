@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "CheckingApp-Theia",
+  "name": "CheckingApp",
   "author": {
     "name": "unfoldingWord",
     "email": "info@unfoldingword.org"
@@ -39,7 +39,7 @@
   },
   "build": {
     "appId": "com.example.theia",
-    "productName": "CheckingTool",
+    "productName": "CheckingApp",
     "directories": {
       "output": "dist"
     },
