@@ -68,13 +68,13 @@ jobs:
           yarn
           yarn bundle
 
-#      - name: Make Linux Installer
-#        if: matrix.tests != 'skip' && runner.os == 'Linux'
-#        shell: bash
-#        run: |
-#          # make sure it can create installer
-#          cd ./electron-app
-#          yarn electron-builder --linux deb
+      - name: Make Linux Installer
+        if: matrix.tests != 'skip' && runner.os == 'Linux'
+        shell: bash
+        run: |
+          # make sure it can create installer
+          cd ./electron-app
+          yarn electron-builder --linux deb
                 
       - name: Make Mac Installer
         if: matrix.tests != 'skip' && runner.os == 'macOS'
@@ -89,13 +89,13 @@ jobs:
         name: Upload Mac installer
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ./CheckingTool-*.dmg
+          path: ./dist/CheckingTool-*.dmg
 
-#      - name: Make Windows Installer
-#        if: matrix.tests != 'skip' && runner.os == 'Windows'
-#        shell: bash
-#        run: |
-#          # make sure it can create installer
-#          cd ./electron-app
-#          yarn electron-builder --win
+      - name: Make Windows Installer
+        if: matrix.tests != 'skip' && runner.os == 'Windows'
+        shell: bash
+        run: |
+          # make sure it can create installer
+          cd ./electron-app
+          yarn electron-builder --win
         
