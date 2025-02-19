@@ -75,7 +75,9 @@ jobs:
           # make sure it can create installer
           cd ./electron-app
           yarn electron-builder --linux deb
-                
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096      
+      
       - name: Make Mac Installer
         if: matrix.tests != 'skip' && runner.os == 'macOS'
         shell: bash
@@ -83,6 +85,9 @@ jobs:
           # make sure it can create installer
           cd ./electron-app
           yarn electron-builder --mac --universal
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
+
 
       - uses: actions/upload-artifact@v4
         if: matrix.tests != 'skip' && runner.os == 'macOS'
@@ -98,4 +103,5 @@ jobs:
           # make sure it can create installer
           cd ./electron-app
           yarn electron-builder --win
-        
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
