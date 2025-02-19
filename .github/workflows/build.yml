@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-22.04]
-        node-version: [20.x]
+        node-version: [20.11.1]
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -31,6 +31,19 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+
+      - name: Get versions
+        run: |
+          echo "node --version"
+          node --version
+          echo "npm --version"
+          npm --version
+          echo "git --version"
+          git --version
+          echo "python --version"
+          python --version
+          echo "pwd"
+          pwd
 
       - name: Read version and commit sha
         run: |
