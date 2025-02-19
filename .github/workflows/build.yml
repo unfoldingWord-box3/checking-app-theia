@@ -80,11 +80,12 @@ jobs:
           NODE_OPTIONS: --max_old_space_size=4096      
 
       - uses: actions/upload-artifact@v4
-        if: matrix.tests != 'skip' && runner.os == 'macOS'
-        name: Upload Mac installer
+        if: matrix.tests != 'skip' && runner.os == 'Linux'
+        name: Upload Linux installer
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: ./dist/CheckingTool-*.deb
+
 
       - name: Make Mac Installer
         if: matrix.tests != 'skip' && runner.os == 'macOS'
@@ -118,7 +119,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         if: matrix.tests != 'skip' && runner.os == 'Windows'
-        name: Upload Mac installer
+        name: Upload Windows installer
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ./dist/CheckingTool*.exe
+          path: .\dist\CheckingTool*.exe
