@@ -9,8 +9,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04]
-        node-version: [20.11.1]
+        os: ['ubuntu-22.04']
+        node: ['20.11.1']
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
