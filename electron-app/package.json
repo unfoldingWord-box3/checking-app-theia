@@ -1,6 +1,7 @@
 {
   "private": true,
-  "name": "electron-app",
+  "name": "CheckingApp-Theia",
+  "email": "support@unfoldingWord.org",
   "version": "0.0.0",
   "main": "lib/backend/electron-main.js",
   "dependencies": {

@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-22.04']
+        os: ['ubuntu-22.04', 'macos-13', 'windows-2019']
         node: ['20.11.1']
 
     runs-on: ${{ matrix.os }}
@@ -64,10 +64,31 @@ jobs:
           cd ./electron-app
           yarn
           yarn bundle
-          
+
+      - name: Make Linux Installer
+        if: matrix.tests != 'skip' && runner.os == 'Linux'
+        shell: bash
+        run: |
           # make sure it can create installer
+          cd ./electron-app
           yarn electron-builder --linux deb
-          
+        
+      - name: Make Mac Installer
+        if: matrix.tests != 'skip' && runner.os == 'macOS'
+        shell: bash
+        run: |
+          # make sure it can create installer
+          cd ./electron-app
+          yarn electron-builder --mac --universal
+        
+      - name: Make Windows Installer
+        if: matrix.tests != 'skip' && runner.os == 'Windows'
+        shell: bash
+        run: |
+          # make sure it can create installer
+          cd ./electron-app
+          yarn electron-builder --win
+        
         env:
           NODE_OPTIONS: --max_old_space_size=4096
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # https://github.com/microsoft/vscode-ripgrep/issues/9
