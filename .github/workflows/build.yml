@@ -38,9 +38,19 @@ jobs:
         shell: bash
         run: |
           yarn --skip-integrity-check --network-timeout 100000
-          yarn build:dev
-          yarn download:plugins
-          yarn package:applications:preview
+          
+          # make sure it builds for browser
+          yarn build:browser
+          
+          # make sure it builds for electron
+          yarn build:electron
+          cd ./electron-app
+          yarn
+          yarn bundle
+          
+          # make sure it can create installer
+          yarn electron-builder --linux deb
+          
         env:
           NODE_OPTIONS: --max_old_space_size=4096
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # https://github.com/microsoft/vscode-ripgrep/issues/9
