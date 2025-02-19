@@ -122,4 +122,4 @@ jobs:
         name: Upload Windows installer
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ./electron-app/dist/CheckingTool*.exe
+          path: .\electron-app\dist\CheckingTool*.exe
