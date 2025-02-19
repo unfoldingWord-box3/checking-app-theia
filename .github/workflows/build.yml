@@ -46,11 +46,19 @@ jobs:
           pwd
 
       - name: Read version and commit sha
+        shell: bash
         run: |
           echo "HASH=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
-          echo "APP_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_ENV
-          echo "APP_NAME=$(node -p -e "require('./package.json').name")" >> $GITHUB_ENV
-
+          echo "APP_VERSION=$(node -p -e "require('./electron-app/package.json').version")" >> $GITHUB_ENV
+          echo "APP_NAME=$(node -p -e "require('./electron-app/package.json').name")" >> $GITHUB_ENV
+          
+      - name: Set artifact name
+        shell: bash
+        run: |
+          echo "ARTIFACT_NAME_WIN=$(echo "$APP_NAME-$APP_VERSION-$HASH.exe")" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME_LINUX=$(echo "$APP_NAME-$APP_VERSION-$HASH.deb")" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME_MAC=$(echo "$APP_NAME-$APP_VERSION-$HASH.dmg")" >> $GITHUB_ENV
+      
       - name: Build and package
         shell: bash
         run: |
@@ -72,7 +80,18 @@ jobs:
           # make sure it can create installer
           cd ./electron-app
           yarn electron-builder --linux deb
-        
+          ls -als ./dist/*
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096      
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.tests != 'skip' && runner.os == 'Linux'
+        name: Upload Linux installer
+        with:
+          name: ${{ env.ARTIFACT_NAME_LINUX }}
+          path: ./electron-app/dist/CheckingTool*.deb
+
+
       - name: Make Mac Installer
         if: matrix.tests != 'skip' && runner.os == 'macOS'
         shell: bash
@@ -80,7 +99,18 @@ jobs:
           # make sure it can create installer
           cd ./electron-app
           yarn electron-builder --mac --universal
-        
+          ls -als ./dist/*
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.tests != 'skip' && runner.os == 'macOS'
+        name: Upload Mac installer
+        with:
+          name: ${{ env.ARTIFACT_NAME_MAC }}
+          path: ./electron-app/dist/CheckingTool*.dmg
+
+
       - name: Make Windows Installer
         if: matrix.tests != 'skip' && runner.os == 'Windows'
         shell: bash
@@ -88,7 +118,13 @@ jobs:
           # make sure it can create installer
           cd ./electron-app
           yarn electron-builder --win
-        
+          ls -als ./dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # https://github.com/microsoft/vscode-ripgrep/issues/9
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.tests != 'skip' && runner.os == 'Windows'
+        name: Upload Windows installer
+        with:
+          name: ${{ env.ARTIFACT_NAME_WIN }}
+          path: .\electron-app\dist\CheckingTool*.exe

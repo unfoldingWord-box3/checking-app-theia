@@ -1,9 +1,13 @@
 {
   "private": true,
-  "name": "CheckingApp-Theia",
+  "name": "CheckingTool",
   "author": {
     "name": "unfoldingWord",
     "email": "info@unfoldingword.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:unfoldingWord-box3/checking-app-theia.git"
   },
   "version": "0.0.0",
   "main": "lib/backend/electron-main.js",
