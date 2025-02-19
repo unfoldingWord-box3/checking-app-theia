@@ -84,7 +84,7 @@ jobs:
         name: Upload Linux installer
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ./dist/CheckingTool-*.deb
+          path: ./electron-app/dist/CheckingTool-*.deb
 
 
       - name: Make Mac Installer
@@ -103,7 +103,7 @@ jobs:
         name: Upload Mac installer
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ./dist/CheckingTool-*.dmg
+          path: ./electron-app/dist/CheckingTool-*.dmg
 
 
       - name: Make Windows Installer
@@ -122,4 +122,4 @@ jobs:
         name: Upload Windows installer
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: .\dist\CheckingTool*.exe
+          path: ./electron-app/dist/CheckingTool*.exe
