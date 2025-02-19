@@ -80,6 +80,7 @@ jobs:
           # make sure it can create installer
           cd ./electron-app
           yarn electron-builder --linux deb
+          ls -als ./dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096      
 
@@ -98,6 +99,7 @@ jobs:
           # make sure it can create installer
           cd ./electron-app
           yarn electron-builder --mac --universal
+          ls -als ./dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 
@@ -116,6 +118,7 @@ jobs:
           # make sure it can create installer
           cd ./electron-app
           yarn electron-builder --win
+          ls -als ./dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 
