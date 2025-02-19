@@ -46,12 +46,14 @@ jobs:
           pwd
 
       - name: Read version and commit sha
+        shell: bash
         run: |
           echo "HASH=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
           echo "APP_VERSION=$(node -p -e "require('./electron-app/package.json').version")" >> $GITHUB_ENV
           echo "APP_NAME=$(node -p -e "require('./electron-app/package.json').name")" >> $GITHUB_ENV
           
       - name: Set artifact name
+        shell: bash
         run: |
           echo "ARTIFACT_NAME_WIN=$(echo "$APP_NAME-$APP_VERSION-$HASH.exe")" >> $GITHUB_ENV
           echo "ARTIFACT_NAME_LINUX=$(echo "$APP_NAME-$APP_VERSION-$HASH.deb")" >> $GITHUB_ENV
