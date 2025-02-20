@@ -4,4 +4,6 @@ lib
 *.log
 *-app/*
 !*-app/package.json
+!*-app/plugins
+!*-app/public
 /.idea/
