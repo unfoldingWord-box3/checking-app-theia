@@ -20,7 +20,7 @@
   "scripts": {
     "bundle": "yarn rebuild && theia build --mode development",
     "rebuild": "theia rebuild:browser --cacheRoot ..",
-    "start": "theia start --plugins=local-dir:../electron-app/plugins",
+    "start": "theia start --plugins=local-dir:../electron-app/public/plugins",
     "watch": "yarn rebuild && theia build --watch --mode development"
   },
   "theia": {
