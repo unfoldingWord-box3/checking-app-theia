@@ -12,30 +12,40 @@
   "version": "0.0.0",
   "main": "lib/backend/electron-main.js",
   "dependencies": {
-    "@theia/core": "1.58.2",
-    "@theia/electron": "1.58.2",
-    "@theia/messages": "1.58.2",
-    "@theia/mini-browser": "1.58.2",
-    "@theia/navigator": "1.58.2",
-    "@theia/outline-view": "1.58.2",
-    "@theia/plugin-ext-vscode": "1.58.2",
-    "@theia/preferences": "1.58.2",
-    "@theia/workspace": "1.58.2",
+    "@theia/core": "1.58.3",
+    "@theia/electron": "1.58.3",
+    "@theia/filesystem": "1.58.3",
+    "@theia/messages": "1.58.3",
+    "@theia/mini-browser": "1.58.3",
+    "@theia/navigator": "1.58.3",
+    "@theia/outline-view": "1.58.3",
+    "@theia/plugin-ext-vscode": "1.58.3",
+    "@theia/preferences": "1.58.3",
+    "@theia/workspace": "1.58.3",
     "CheckingApp": "0.0.0"
   },
   "devDependencies": {
-    "@theia/cli": "1.58.2",
+    "@theia/cli": "1.58.3",
     "electron": "30.5.1",
-    "electron-builder": "^25.1.8"
+    "electron-builder": "^25.1.8",
+    "rimraf": "6.0.1"
   },
   "scripts": {
     "bundle": "yarn rebuild && theia build --mode development",
     "rebuild": "theia rebuild:electron --cacheRoot ..",
     "start": "theia start --plugins=local-dir:./plugins",
-    "watch": "yarn rebuild && theia build --watch --mode development"
+    "watch": "yarn rebuild && theia build --watch --mode development",
+    "prepare": "yarn run clean && yarn rebuild && yarn run download:plugins",
+    "download:plugins": "theia download:plugins",
+    "clean": "theia clean",
+    "make-bundle": "yarn prepare && yarn bundle"
   },
   "theia": {
     "target": "electron"
+  },
+  "theiaPluginsDir": "./plugins",
+  "theiaPlugins": {
+    "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.14/checking-extension-0.9.14.vsix"
   },
   "build": {
     "appId": "com.example.theia",
@@ -45,7 +55,7 @@
     },
     "files": [
       "lib/**/*",
-      "plugins/*",
+      "plugins/**/*",
       "package.json"
     ],
     "mac": {

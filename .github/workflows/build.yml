@@ -25,7 +25,7 @@ jobs:
         node: ['20.11.1']
 
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 120
     
     steps:
       - name: Checkout
@@ -83,7 +83,7 @@ jobs:
           yarn build:electron
           cd ./electron-app
           yarn
-          yarn bundle
+          yarn make-bundle
 
       - name: Make Linux Installer
         if: matrix.tests != 'skip' && runner.os == 'Linux'

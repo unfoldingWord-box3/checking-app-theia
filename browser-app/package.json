@@ -3,18 +3,19 @@
   "name": "browser-app",
   "version": "0.0.0",
   "dependencies": {
-    "@theia/core": "1.58.2",
-    "@theia/messages": "1.58.2",
-    "@theia/mini-browser": "1.58.2",
-    "@theia/navigator": "1.58.2",
-    "@theia/outline-view": "1.58.2",
-    "@theia/plugin-ext-vscode": "1.58.2",
-    "@theia/preferences": "1.58.2",
-    "@theia/workspace": "1.58.2",
+    "@theia/core": "1.58.3",
+    "@theia/filesystem": "1.58.3",
+    "@theia/messages": "1.58.3",
+    "@theia/mini-browser": "1.58.3",
+    "@theia/navigator": "1.58.3",
+    "@theia/outline-view": "1.58.3",
+    "@theia/plugin-ext-vscode": "1.58.3",
+    "@theia/preferences": "1.58.3",
+    "@theia/workspace": "1.58.3",
     "CheckingApp": "0.0.0"
   },
   "devDependencies": {
-    "@theia/cli": "1.58.2"
+    "@theia/cli": "1.58.3"
   },
   "scripts": {
     "bundle": "yarn rebuild && theia build --mode development",
