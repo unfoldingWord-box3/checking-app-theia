@@ -85,7 +85,7 @@ Build the electron app
 
     yarn build:electron
     cd electron-app
-    yarn && yarn bundle
+    yarn && yarn make-bundle
 
 Create the application installer.  The example for MacOS is:
 
