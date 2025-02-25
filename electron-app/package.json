@@ -28,9 +28,13 @@
     "@theia/cli": "1.58.3",
     "electron": "30.5.1",
     "electron-builder": "^25.1.8",
+    "electron-chromedriver": "^28.2.8",
+    "electron-mocha": "^12.3.0",
+    "electron-osx-sign": "^0.6.0",
     "fs-extra": "^9.0.1",
     "rimraf": "6.0.1",
-    "ts-node": "^10.0.0"
+    "ts-node": "^10.0.0",
+    "@theia/native-webpack-plugin": "1.59.0-next.72"
   },
   "scripts": {
     "clean": "theia clean && rimraf node_modules",
