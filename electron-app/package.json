@@ -10,7 +10,7 @@
     "url": "git@github.com:unfoldingWord-box3/checking-app-theia.git"
   },
   "version": "0.0.0",
-  "main": "lib/backend/electron-main.js",
+  "main": "scripts/theia-electron-main.js",
   "dependencies": {
     "@theia/core": "1.58.3",
     "@theia/electron": "1.58.3",
