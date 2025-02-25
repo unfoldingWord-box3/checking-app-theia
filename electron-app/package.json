@@ -78,9 +78,5 @@
         "configurationFolder": ".checkingApp"
       }
     }
-  },
-  "theiaPluginsDir": "./plugins",
-  "theiaPlugins": {
-    "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.14/checking-extension-0.9.14.vsix"
   }
 }

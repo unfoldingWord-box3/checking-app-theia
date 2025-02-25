@@ -6,15 +6,14 @@
   },
   "scripts": {
     "clean": "lerna run clean && rimraf node_modules",
-    "build": "yarn build:extensions && yarn build:applications",
-    "build:dev": "yarn build:extensions && yarn build:applications:dev",
-    "build:applications": "yarn build:extensions && lerna run --scope=\"*app\" build:prod --concurrency 1",
-    "build:applications:dev": "yarn build:extensions && lerna run --scope=\"*app\" build --concurrency 1",
-    "build:extensions": "lerna run --scope=\"theia-ide*ext\" build",
+    "build": "yarn build:applications",
+    "build:dev": "yarn build:applications:dev",
+    "build:applications": "lerna run build:prod --concurrency 1",
+    "build:applications:dev": "lerna run build --concurrency 1",
     "download:plugins": "theia download:plugins --rate-limit=15 --parallel=false && yarn permissions:writeable",
-    "package:applications": "lerna run --scope=\"*app\" package --concurrency 1",
-    "package:applications:preview": "lerna run --scope=\"*app\" package:preview --concurrency 1",
-    "package:applications:prod": "lerna run --scope=\"*app\" package:prod --concurrency 1",
+    "package:applications": "lerna run package --concurrency 1",
+    "package:applications:preview": "lerna run package:preview --concurrency 1",
+    "package:applications:prod": "lerna run package:prod --concurrency 1",
     "permissions:writeable": "ts-node scripts/make-files-writeable.ts plugins",
     "watch": "lerna run --parallel watch",
     "test": "lerna run test",
@@ -32,15 +31,16 @@
   "devDependencies": {
     "@eclipse-dash/nodejs-wrapper": "^0.0.1",
     "@theia/cli": "1.59.0-next.72",
+    "@types/yargs": "17.0.7",
     "lerna": "^6.0.1",
     "rimraf": "^2.7.1",
-    "ts-node": "^10.0.0"
+    "ts-node": "^10.0.0",
+    "type-fest": "^0.20.2",
+    "yargs": "17.2.1"
   },
   "theiaPluginsDir": "plugins",
   "theiaPlugins": {
-    "eclipse-theia.builtin-extension-pack": "https://open-vsx.org/api/eclipse-theia/builtin-extension-pack/1.95.3/file/eclipse-theia.builtin-extension-pack-1.95.3.vsix",
-    "vscjava.vscode-java-pack": "https://open-vsx.org/api/vscjava/vscode-java-pack/0.29.0/file/vscjava.vscode-java-pack-0.29.0.vsix",
-    "vscjava.vscode-java-dependency": "https://open-vsx.org/api/vscjava/vscode-java-dependency/0.24.1/file/vscjava.vscode-java-dependency-0.24.1.vsix"
+    "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.14/checking-extension-0.9.14.vsix"
   },
   "workspaces": [
     "CheckingApp", "browser-app", "electron-app"
