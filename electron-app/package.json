@@ -40,7 +40,7 @@
     "clean": "theia clean && rimraf node_modules",
     "clean:dist": "rimraf dist",
     "bundle:lib": "yarn rebuild && theia build --mode development",
-    "build": "yarn bundle:lib && theia build --app-target=\"electron\" --mode development",
+    "build": "yarn rebuild && theia build --app-target=\"electron\" --mode development",
     "build:prod": "yarn -s rebuild && theia build --app-target=\"electron\"",
     "rebuild": "theia rebuild:electron --cacheRoot ..",
     "watch": "concurrently -n compile,build \"theiaext watch --preserveWatchOutput\" \"theia build --watch --mode development\"",

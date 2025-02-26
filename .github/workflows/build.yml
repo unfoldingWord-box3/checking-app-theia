@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-22.04', 'macos-14', 'windows-2019']
+        os: ['ubuntu-22.04', 'macos-13', 'windows-2019']
         node: ['20.11.1']
 
     runs-on: ${{ matrix.os }}
@@ -67,10 +67,9 @@ jobs:
       - name: Set artifact name
         shell: bash
         run: |
-          echo "ARTIFACT_NAME_WIN=$(echo "$APP_NAME-$APP_VERSION-$HASH-win-x64.exe")" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME_LINUX=$(echo "$APP_NAME-$APP_VERSION-$HASH-linux-x64.deb")" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME_MAC_ARM=$(echo "$APP_NAME-$APP_VERSION-$HASH-macos-arm64.dmg")" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME_MAC_X64=$(echo "$APP_NAME-$APP_VERSION-$HASH-macos-x64.dmg")" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME_WIN=$(echo "$APP_NAME-$APP_VERSION-$HASH.exe")" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME_LINUX=$(echo "$APP_NAME-$APP_VERSION-$HASH.deb")" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME_MAC=$(echo "$APP_NAME-$APP_VERSION-$HASH.dmg")" >> $GITHUB_ENV
 
       - name: Build and package
         shell: bash
@@ -114,17 +113,10 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         if: matrix.tests != 'skip' && runner.os == 'macOS'
-        name: Upload Mac installer ARM
+        name: Upload Mac installer
         with:
-          name: ${{ env.ARTIFACT_NAME_MAC_ARM }}
-          path: ./electron-app/dist/CheckingTool*arm64.dmg
-
-      - uses: actions/upload-artifact@v4
-        if: matrix.tests != 'skip' && runner.os == 'macOS'
-        name: Upload Mac installer x64
-        with:
-          name: ${{ env.ARTIFACT_NAME_MAC_X64 }}
-          path: ./electron-app/dist/CheckingTool*x64.dmg
+          name: ${{ env.ARTIFACT_NAME_MAC }}
+          path: ./electron-app/dist/CheckingTool*.dmg
 
 
       - name: Make Windows Installer
