@@ -6,4 +6,6 @@ lib
 !*-app/package.json
 !*-app/plugins
 !*-app/public
+!*-app/scripts
+!*-app/resources
 /.idea/

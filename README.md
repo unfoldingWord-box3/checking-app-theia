@@ -7,65 +7,36 @@ Please install all necessary [prerequisites](https://github.com/eclipse-theia/th
 
 ## Running the browser example
 
-    yarn build:browser
-    yarn start:browser
+    yarn && yarn build:dev && yarn download:plugins
+    yarn browser start
 
-*or:*
-
-    yarn build:browser
-    cd browser-app
-    yarn start
-
-*or:* launch `Start Browser Backend` configuration from VS code.
+~~*or:* launch `Start Browser Backend` configuration from VS code.~~
 
 Open http://localhost:3000 in the browser.
 
 ## Running the Electron example
 
-    yarn build:electron
-    yarn start:electron
+    yarn && yarn build:dev && yarn download:plugins
+    yarn electron package:preview
+    yarn electron start
 
-*or:*
-
-    yarn build:electron
-    cd electron-app
-    yarn start
-
-*or:* launch `Start Electron Backend` configuration from VS code.
+~~*or:* launch `Start Electron Backend` configuration from VS code.~~
 
 
 ## Developing with the browser example
 
-Start watching all packages, including `browser-app`, of your application with
+Start watching all packages of your application with
 
-    yarn watch:browser
-
-*or* watch only specific packages with
-
-    cd CheckingApp
-    yarn watch
-
-and the browser example.
-
-    cd browser-app
     yarn watch
 
 Run the example as [described above](#Running-the-browser-example)
+
 ## Developing with the Electron example
 
 Start watching all packages, including `electron-app`, of your application with
 
-    yarn watch:electron
-
-*or* watch only specific packages with
-
-    cd CheckingApp
     yarn watch
 
-and the Electron example.
-
-    cd electron-app
-    yarn watch
 
 Run the example as [described above](#Running-the-Electron-example)
 
@@ -81,20 +52,11 @@ Publish packages with lerna to update versions properly across local packages, [
 
 ## Creating installer for CheckingApp
 
-Build the electron app
+Build the theia app
 
-    yarn build:electron
-    cd electron-app
-    yarn && yarn make-bundle
+    yarn && yarn build:dev && yarn download:plugins
 
-Create the application installer.  The example for MacOS is:
+Create the application installer.
 
-    cd electron-app
-    yarn electron-builder --mac --universal
+    yarn package:applications
 
-Create the application installer.  The example for Windows is:
-
-    cd electron-app
-    yarn electron-builder --win
-
-For Linux replace `--win` with `--linux deb`

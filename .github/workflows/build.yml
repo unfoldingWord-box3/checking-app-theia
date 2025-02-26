@@ -70,29 +70,26 @@ jobs:
           echo "ARTIFACT_NAME_WIN=$(echo "$APP_NAME-$APP_VERSION-$HASH.exe")" >> $GITHUB_ENV
           echo "ARTIFACT_NAME_LINUX=$(echo "$APP_NAME-$APP_VERSION-$HASH.deb")" >> $GITHUB_ENV
           echo "ARTIFACT_NAME_MAC=$(echo "$APP_NAME-$APP_VERSION-$HASH.dmg")" >> $GITHUB_ENV
-      
+
       - name: Build and package
         shell: bash
         run: |
           yarn --skip-integrity-check --network-timeout 100000
           
           # make sure it builds for browser
-          yarn build:browser
+          # yarn build:browser
           
           # make sure it builds for electron
-          yarn build:electron
-          cd ./electron-app
-          yarn
-          yarn make-bundle
+          yarn build:dev
+          yarn download:plugins
 
       - name: Make Linux Installer
         if: matrix.tests != 'skip' && runner.os == 'Linux'
         shell: bash
         run: |
           # make sure it can create installer
-          cd ./electron-app
-          yarn electron-builder --linux deb
-          ls -als ./dist/*
+          yarn package:applications
+          ls -als ./electron-app/dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096      
 
@@ -109,9 +106,8 @@ jobs:
         shell: bash
         run: |
           # make sure it can create installer
-          cd ./electron-app
-          yarn electron-builder --mac --universal
-          ls -als ./dist/*
+          yarn package:applications
+          ls -als ./electron-app/dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 
@@ -128,9 +124,8 @@ jobs:
         shell: bash
         run: |
           # make sure it can create installer
-          cd ./electron-app
-          yarn electron-builder --win
-          ls -als ./dist/*
+          yarn package:applications
+          ls -als ./electron-app/dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 

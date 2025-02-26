@@ -5,17 +5,42 @@
     "node": ">=18"
   },
   "scripts": {
-    "build:browser": "yarn --cwd browser-app bundle",
-    "build:electron": "yarn --cwd electron-app bundle",
-    "prepare": "lerna run prepare",
-    "postinstall": "theia check:theia-version",
-    "start:browser": "yarn --cwd browser-app start",
-    "start:electron": "yarn --cwd electron-app start",
-    "watch:browser": "lerna run --parallel watch --ignore electron-app",
-    "watch:electron": "lerna run --parallel watch --ignore browser-app"
+    "clean": "lerna run clean && rimraf node_modules",
+    "build": "yarn build:applications",
+    "build:dev": "yarn build:applications:dev",
+    "build:applications": "lerna run build:prod --concurrency 1",
+    "build:applications:dev": "lerna run build --concurrency 1",
+    "download:plugins": "theia download:plugins --rate-limit=15 --parallel=false && yarn permissions:writeable",
+    "package:applications": "yarn --cwd electron-app package",
+    "package:applications:preview": "yarn --cwd electron-app package:preview",
+    "package:applications:prod": "yarn --cwd electron-app package:prod",
+    "permissions:writeable": "ts-node scripts/make-files-writeable.ts plugins",
+    "watch": "lerna run --parallel watch",
+    "test": "lerna run test",
+    "electron": "yarn --cwd electron-app",
+    "browser": "yarn --cwd browser-app",
+    "update:theia": "ts-node scripts/update-theia-version.ts",
+    "update:theia:children": "lerna run update:theia -- ",
+    "update:next": "ts-node scripts/update-theia-version.ts next && lerna run update:next",
+    "lint": "eslint --ext js,jsx,ts,tsx scripts && lerna run lint",
+    "lint:fix": "eslint --ext js,jsx,ts,tsx scripts --fix && lerna run lint:fix",
+    "license:check": "npx dash-licenses-wrapper  --configFile=./configs/license-check-config.json",
+    "license:check:review": "npx dash-licenses-wrapper  --configFile=./configs/license-check-config.json --review",
+    "postinstall": "theia-patch"
   },
   "devDependencies": {
-    "lerna": "2.4.0"
+    "@eclipse-dash/nodejs-wrapper": "^0.0.1",
+    "@theia/cli": "1.59.0-next.72",
+    "@types/yargs": "17.0.7",
+    "lerna": "^6.0.1",
+    "rimraf": "^2.7.1",
+    "ts-node": "^10.0.0",
+    "type-fest": "^0.20.2",
+    "yargs": "17.2.1"
+  },
+  "theiaPluginsDir": "plugins",
+  "theiaPlugins": {
+    "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.14/checking-extension-0.9.14.vsix"
   },
   "workspaces": [
     "CheckingApp", "browser-app", "electron-app"
