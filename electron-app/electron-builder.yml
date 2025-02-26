@@ -44,8 +44,8 @@ mac:
         - theia
   darkModeSupport: true
   target:
-    - dmg
-    - zip
+    - target: default
+      arch: [arm64,x64]
   publish:
     provider: generic
     url: "https://download.eclipse.org/theia/ide/latest/macos"
@@ -76,10 +76,10 @@ nsis:
   artifactName: ${productName}Setup.${ext}
   license: LICENSE
 dmg:
-  artifactName: ${productName}.${ext}
+  artifactName: ${productName}-${version}-${arch}.${ext}
 deb:
-  artifactName: ${productName}.${ext}
+  artifactName: ${productName}-${version}-${arch}.${ext}
 appImage:
-  artifactName: ${productName}.${ext}
+  artifactName: ${productName}-${version}-${arch}.${ext}
 
 afterPack: ./scripts/after-pack.js
