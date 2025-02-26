@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-22.04', 'macos-13', 'windows-2019']
+        os: ['ubuntu-22.04', 'macos-14', 'windows-2019']
         node: ['20.11.1']
 
     runs-on: ${{ matrix.os }}
@@ -77,12 +77,12 @@ jobs:
         run: |
           yarn --skip-integrity-check --network-timeout 100000
           
-          # make sure it builds for browser
-          # yarn build:browser
-          
           # make sure it builds for electron
-          yarn build:dev
+          yarn electron bundle:lib
           yarn download:plugins
+          yarn build:dev
+          ls -als ./electron-app/*
+
 
       - name: Make Linux Installer
         if: matrix.tests != 'skip' && runner.os == 'Linux'

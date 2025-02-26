@@ -54,9 +54,8 @@ Publish packages with lerna to update versions properly across local packages, [
 
 Build the theia app
 
-    yarn && yarn build:dev && yarn download:plugins
+    yarn && yarn electron bundle:lib && yarn download:plugins && yarn build:dev
 
 Create the application installer.
 
     yarn package:applications
-
