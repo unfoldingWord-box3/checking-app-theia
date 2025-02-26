@@ -4,6 +4,16 @@
     "yarn": ">=1.7.0 <2",
     "node": ">=18"
   },
+  "devDependencies": {
+    "@eclipse-dash/nodejs-wrapper": "^0.0.1",
+    "@theia/cli": "1.59.0-next.72",
+    "@types/yargs": "17.0.7",
+    "lerna": "^6.0.1",
+    "rimraf": "^2.7.1",
+    "ts-node": "^10.0.0",
+    "type-fest": "^0.20.2",
+    "yargs": "17.2.1"
+  },
   "scripts": {
     "clean": "lerna run clean && rimraf node_modules",
     "build": "yarn build:applications",
@@ -27,16 +37,6 @@
     "license:check": "npx dash-licenses-wrapper  --configFile=./configs/license-check-config.json",
     "license:check:review": "npx dash-licenses-wrapper  --configFile=./configs/license-check-config.json --review",
     "postinstall": "theia-patch"
-  },
-  "devDependencies": {
-    "@eclipse-dash/nodejs-wrapper": "^0.0.1",
-    "@theia/cli": "1.59.0-next.72",
-    "@types/yargs": "17.0.7",
-    "lerna": "^6.0.1",
-    "rimraf": "^2.7.1",
-    "ts-node": "^10.0.0",
-    "type-fest": "^0.20.2",
-    "yargs": "17.2.1"
   },
   "theiaPluginsDir": "plugins",
   "theiaPlugins": {

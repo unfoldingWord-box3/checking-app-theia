@@ -1,6 +1,8 @@
 {
   "private": true,
   "name": "CheckingTool",
+  "version": "0.1.0",
+  "main": "scripts/theia-electron-main.js",
   "author": {
     "name": "unfoldingWord",
     "email": "info@unfoldingword.org"
@@ -9,8 +11,44 @@
     "type": "git",
     "url": "git@github.com:unfoldingWord-box3/checking-app-theia.git"
   },
-  "version": "0.0.0",
-  "main": "scripts/theia-electron-main.js",
+  "engines": {
+    "yarn": ">=1.7.0 <2",
+    "node": ">=12.14.1"
+  },
+  "theia": {
+    "target": "electron",
+    "frontend": {
+      "config": {
+        "applicationName": "CheckingTool",
+        "reloadOnReconnect": true,
+        "preferences": {
+          "toolbar.showToolbar": true,
+          "security.workspace.trust.enabled": false
+        },
+        "electron": {
+          "showWindowEarly": false,
+          "splashScreenOptions": {
+            "content": "resources/TheiaIDESplash.svg",
+            "height": 276,
+            "width": 446
+          }
+        }
+      }
+    },
+    "backend": {
+      "config": {
+        "frontendConnectionTimeout": -1,
+        "startupTimeout": -1,
+        "resolveSystemPlugins": false,
+        "configurationFolder": ".CheckingTool"
+      }
+    },
+    "generator": {
+      "config": {
+        "preloadTemplate": "./resources/preload.html"
+      }
+    }
+  },
   "dependencies": {
     "@theia/core": "1.58.3",
     "@theia/electron": "1.58.3",
@@ -22,19 +60,20 @@
     "@theia/plugin-ext-vscode": "1.58.3",
     "@theia/preferences": "1.58.3",
     "@theia/workspace": "1.58.3",
+    "fs-extra": "^9.0.1",
     "CheckingApp": "0.0.0"
   },
   "devDependencies": {
     "@theia/cli": "1.58.3",
+    "@theia/native-webpack-plugin": "1.59.0-next.72",
     "electron": "30.5.1",
-    "electron-builder": "^25.1.8",
+    "electron-builder": "24.13.2",
     "electron-chromedriver": "^28.2.8",
     "electron-mocha": "^12.3.0",
     "electron-osx-sign": "^0.6.0",
-    "fs-extra": "^9.0.1",
     "rimraf": "^2.7.1",
     "ts-node": "^10.0.0",
-    "@theia/native-webpack-plugin": "1.59.0-next.72"
+    "yargs": "17.2.1"
   },
   "scripts": {
     "clean": "theia clean && rimraf node_modules",
@@ -44,7 +83,7 @@
     "build:prod": "yarn -s rebuild && theia build --app-target=\"electron\"",
     "rebuild": "theia rebuild:electron --cacheRoot ..",
     "watch": "concurrently -n compile,build \"theiaext watch --preserveWatchOutput\" \"theia build --watch --mode development\"",
-    "start": "electron ./scripts/theia-electron-main.js --plugins=local-dir:../plugins",
+    "start": "electron scripts/theia-electron-main.js --plugins=local-dir:../plugins",
     "start:debug": "yarn start --log-level=debug",
     "package": "yarn clean:dist && yarn rebuild && electron-builder -c.mac.identity=null --publish never",
     "package:prod": "yarn deploy",
@@ -52,36 +91,7 @@
     "package:preview": "yarn clean:dist && yarn rebuild && electron-builder -c.mac.identity=null --dir",
     "update:checksum": "ts-node scripts/update-checksum.ts",
     "update:blockmap": "ts-node scripts/update-blockmap.ts",
-    "update:theia": "ts-node ../../scripts/update-theia-version.ts",
-    "update:next": "ts-node ../../scripts/update-theia-version.ts next"
-  },
-  "theia": {
-    "target": "electron",
-    "frontend": {
-      "config": {
-        "applicationName": "CheckingApp",
-        "reloadOnReconnect": true,
-        "preferences": {
-          "toolbar.showToolbar": true,
-          "security.workspace.trust.enabled": false
-        },
-        "electron": {
-          "showWindowEarly": false
-        }
-      },
-      "generator": {
-        "config": {
-          "preloadTemplate": "./resources/preload.html"
-        }
-      }
-    },
-    "backend": {
-      "config": {
-        "frontendConnectionTimeout": -1,
-        "startupTimeout": -1,
-        "resolveSystemPlugins": false,
-        "configurationFolder": ".checkingApp"
-      }
-    }
+    "update:theia": "ts-node ../scripts/update-theia-version.ts",
+    "update:next": "ts-node ../scripts/update-theia-version.ts next"
   }
 }

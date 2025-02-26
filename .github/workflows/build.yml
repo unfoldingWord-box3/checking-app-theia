@@ -106,9 +106,11 @@ jobs:
         if: matrix.tests != 'skip' && runner.os == 'macOS'
         shell: bash
         run: |
+          ls -als ./electron-app/*
           # make sure it can create installer
           yarn package:applications
           ls -als ./electron-app/dist/*
+          ls -als ./electron-app/dist/mac-arm64/CheckingTool.app/Contents/Resources/app/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 
