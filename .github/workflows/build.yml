@@ -89,7 +89,7 @@ jobs:
         run: |
           # make sure it can create installer
           yarn package:applications
-          ls -als ./dist/*
+          ls -als ./electron-app/dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096      
 
@@ -107,7 +107,7 @@ jobs:
         run: |
           # make sure it can create installer
           yarn package:applications
-          ls -als ./dist/*
+          ls -als ./electron-app/dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 
@@ -125,7 +125,7 @@ jobs:
         run: |
           # make sure it can create installer
           yarn package:applications
-          ls -als ./dist/*
+          ls -als ./electron-app/dist/*
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 
