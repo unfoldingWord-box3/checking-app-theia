@@ -46,7 +46,6 @@ mac:
   target:
     - dmg
     - zip
-  arch: universal
   publish:
     provider: generic
     url: "https://download.eclipse.org/theia/ide/latest/macos"
