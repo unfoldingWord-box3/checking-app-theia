@@ -7,4 +7,5 @@ lib
 !*-app/plugins
 !*-app/public
 !*-app/scripts
+!*-app/resources
 /.idea/
