@@ -22,6 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-22.04', 'macos-13', 'windows-2019']
+        # TODO restore: os: ['ubuntu-22.04', 'macos-13', 'windows-2019']
         node: ['20.11.1']
 
     runs-on: ${{ matrix.os }}
