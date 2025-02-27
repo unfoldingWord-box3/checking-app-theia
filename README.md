@@ -59,5 +59,6 @@ Build the theia app
 
 Create the application installer.
 
+    yarn electron bundle:lib
     yarn package:applications
 
