@@ -11,6 +11,40 @@
   },
   "version": "0.9.0",
   "main": "scripts/theia-electron-main.js",
+  "theia": {
+    "target": "electron",
+    "frontend": {
+      "config": {
+        "applicationName": "CheckingApp",
+        "reloadOnReconnect": true,
+        "preferences": {
+          "toolbar.showToolbar": true,
+          "security.workspace.trust.enabled": false
+        },
+        "electron": {
+          "showWindowEarly": false,
+          "splashScreenOptions": {
+            "content": "resources/TheiaIDESplash.svg",
+            "height": 276,
+            "width": 446
+          }
+        }
+      }
+    },
+    "backend": {
+      "config": {
+        "frontendConnectionTimeout": -1,
+        "startupTimeout": -1,
+        "resolveSystemPlugins": false,
+        "configurationFolder": ".checkingApp"
+      }
+    },
+    "generator": {
+      "config": {
+        "preloadTemplate": "./resources/preload.html"
+      }
+    }
+  },
   "dependencies": {
     "@theia/core": "1.58.3",
     "@theia/electron": "1.58.3",
@@ -54,34 +88,5 @@
     "update:blockmap": "ts-node scripts/update-blockmap.ts",
     "update:theia": "ts-node ../scripts/update-theia-version.ts",
     "update:next": "ts-node ../scripts/update-theia-version.ts next"
-  },
-  "theia": {
-    "target": "electron",
-    "frontend": {
-      "config": {
-        "applicationName": "CheckingApp",
-        "reloadOnReconnect": true,
-        "preferences": {
-          "toolbar.showToolbar": true,
-          "security.workspace.trust.enabled": false
-        },
-        "electron": {
-          "showWindowEarly": false
-        }
-      },
-      "generator": {
-        "config": {
-          "preloadTemplate": "./resources/preload.html"
-        }
-      }
-    },
-    "backend": {
-      "config": {
-        "frontendConnectionTimeout": -1,
-        "startupTimeout": -1,
-        "resolveSystemPlugins": false,
-        "configurationFolder": ".checkingApp"
-      }
-    }
   }
 }
