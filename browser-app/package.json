@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "browser-app",
-  "version": "0.0.0",
+  "version": "0.9.0",
   "theia": {
     "frontend": {
       "config": {
@@ -40,7 +40,7 @@
     "@theia/plugin-ext-vscode": "1.58.3",
     "@theia/preferences": "1.58.3",
     "@theia/workspace": "1.58.3",
-    "CheckingApp": "0.0.0"
+    "CheckingApp": "0.0.1"
   },
   "devDependencies": {
     "@theia/cli": "1.59.0-next.72",
@@ -52,8 +52,6 @@
     "build:prod": "yarn -s rebuild && theia  build --app-target=\"browser\"",
     "rebuild": "theia rebuild:browser --cacheRoot ..",
     "start": "theia start --plugins=local-dir:../plugins",
-    "watch": "concurrently --kill-others -n tsc,build -c red,yellow \"tsc -b -w --preserveWatchOutput\" \"yarn -s watch:bundle\"",
-    "update:theia": "ts-node ../scripts/update-theia-version.ts",
-    "update:next": "ts-node ../scripts/update-theia-version.ts next"
+    "watch": "concurrently --kill-others -n tsc,build -c red,yellow \"tsc -b -w --preserveWatchOutput\" \"yarn -s watch:bundle\""
   }
 }

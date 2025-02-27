@@ -8,6 +8,7 @@ Please install all necessary [prerequisites](https://github.com/eclipse-theia/th
 ## Running the browser example
 
     yarn && yarn build:dev && yarn download:plugins
+    yarn browser build
     yarn browser start
 
 ~~*or:* launch `Start Browser Backend` configuration from VS code.~~
@@ -58,5 +59,6 @@ Build the theia app
 
 Create the application installer.
 
+    yarn electron bundle:lib
     yarn package:applications
 
