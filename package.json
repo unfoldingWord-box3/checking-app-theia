@@ -5,7 +5,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "clean": "lerna run clean && rimraf node_modules",
+    "clean": "lerna clean  --yes --concurrency 1 && rimraf .browser_modules && rimraf node_modules",
     "build": "yarn build:applications",
     "build:dev": "yarn build:applications:dev",
     "build:applications": "lerna run build:prod --concurrency 1",
