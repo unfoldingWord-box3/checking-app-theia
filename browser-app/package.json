@@ -5,14 +5,14 @@
   "theia": {
     "frontend": {
       "config": {
-        "applicationName": "Theia IDE",
+        "applicationName": "CheckingApp",
+        "reloadOnReconnect": true,
         "warnOnPotentiallyInsecureHostPattern": false,
         "preferences": {
           "toolbar.showToolbar": true,
           "files.enableTrash": false,
           "security.workspace.trust.enabled": false
-        },
-        "reloadOnReconnect": true
+        }
       }
     },
     "backend": {
@@ -20,7 +20,7 @@
         "warnOnPotentiallyInsecureHostPattern": false,
         "startupTimeout": -1,
         "resolveSystemPlugins": false,
-        "configurationFolder": ".theia-ide",
+        "configurationFolder": ".checkingApp",
         "frontendConnectionTimeout": 3000
       }
     },
@@ -44,7 +44,8 @@
   },
   "devDependencies": {
     "@theia/cli": "1.59.0-next.72",
-    "@theia/native-webpack-plugin": "1.59.0-next.72"
+    "@theia/native-webpack-plugin": "1.59.0-next.72",
+    "rimraf": "^2.7.1"
   },
   "scripts": {
     "clean": "theia clean && rimraf node_modules",
