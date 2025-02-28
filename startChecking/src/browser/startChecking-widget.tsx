@@ -6,7 +6,6 @@ import { MessageService } from '@theia/core';
 import { Message } from '@theia/core/lib/browser';
 import { FileDialogService, OpenFileDialogProps } from '@theia/filesystem/lib/browser';
 import { WorkspaceService } from '@theia/workspace/lib/browser';
-import { FileSystem } from '@theia/filesystem/lib/common';
 
 @injectable()
 export class StartCheckingWidget extends ReactWidget {
@@ -22,9 +21,6 @@ export class StartCheckingWidget extends ReactWidget {
 
     @inject(WorkspaceService)
     protected readonly workspaceService!: WorkspaceService;
-
-    @inject(FileSystem)
-    protected readonly fileSystem!: FileSystem;
 
     @postConstruct()
     protected init(): void {
@@ -50,14 +46,10 @@ export class StartCheckingWidget extends ReactWidget {
     }
 
     protected async selectExistingProject(): Promise<void> {
-        const homeDirUri = await this.fileSystem.getCurrentUserHome();
-        const defaultUri = homeDirUri?.resolve('projects');
-
         const props: OpenFileDialogProps = {
             canSelectFolders: true,
             canSelectFiles: false,
-            title: 'Select a Folder',
-            defaultUri
+            title: 'Select a Folder'
         };
         const folderUri = await this.fileDialogService.showOpenDialog(props);
         if (folderUri) {
