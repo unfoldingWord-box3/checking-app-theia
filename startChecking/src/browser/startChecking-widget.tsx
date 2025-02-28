@@ -4,6 +4,7 @@ import { AlertMessage } from '@theia/core/lib/browser/widgets/alert-message';
 import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
 import { MessageService } from '@theia/core';
 import { Message } from '@theia/core/lib/browser';
+import { FileDialogService, OpenFileDialogProps } from '@theia/filesystem/lib/browser';
 
 @injectable()
 export class StartCheckingWidget extends ReactWidget {
@@ -14,12 +15,15 @@ export class StartCheckingWidget extends ReactWidget {
     @inject(MessageService)
     protected readonly messageService!: MessageService;
 
+    @inject(FileDialogService)
+    protected readonly fileDialogService!: FileDialogService;
+
     @postConstruct()
     protected init(): void {
-        this.doInit()
+        this.doInit();
     }
 
-    protected async doInit(): Promise <void> {
+    protected async doInit(): Promise<void> {
         this.id = StartCheckingWidget.ID;
         this.title.label = StartCheckingWidget.LABEL;
         this.title.caption = StartCheckingWidget.LABEL;
@@ -29,16 +33,27 @@ export class StartCheckingWidget extends ReactWidget {
     }
 
     render(): React.ReactElement {
-        const header = `You have not selected a project for checking. Either select and existing checking project or create a new one`;
+        const header = `You have not selected a project for checking. Either select an existing checking project or create a new one.`;
         return <div id='widget-container'>
             <AlertMessage type='INFO' header={header} />
             <button id='selectProjectButton' className='theia-button secondary' title='Select Existing Project' onClick={_a => this.selectExistingProject()}>Select Existing Project</button>
             <button id='newProjectButton' className='theia-button secondary' title='Create New Project' onClick={_a => this.createNewProject()}>Create New Project</button>
-        </div>
+        </div>;
     }
 
-    protected selectExistingProject(): void {
-        this.messageService.info('selectExistingProject');
+    protected async selectExistingProject(): Promise<void> {
+        const props: OpenFileDialogProps = {
+            canSelectFolders: true,
+            canSelectFiles: false,
+            title: 'Select a Folder'
+        };
+        const folderUri = await this.fileDialogService.showOpenDialog(props);
+        if (folderUri) {
+            this.messageService.info('Selected folder: ' + folderUri.path.toString());
+            // Handle the selected folder URI
+        } else {
+            this.messageService.info('No folder selected.');
+        }
     }
 
     protected createNewProject(): void {
