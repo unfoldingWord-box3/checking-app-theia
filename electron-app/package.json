@@ -56,7 +56,8 @@
     "@theia/plugin-ext-vscode": "1.58.3",
     "@theia/preferences": "1.58.3",
     "@theia/workspace": "1.58.3",
-    "CheckingApp": "0.0.1"
+    "CheckingApp": "0.0.1",
+    "startChecking": "0.0.1"
   },
   "devDependencies": {
     "@theia/cli": "1.58.3",
