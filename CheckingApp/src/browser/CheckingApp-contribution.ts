@@ -1,7 +1,28 @@
-import { injectable } from '@theia/core/shared/inversify';
+import { injectable, inject } from 'inversify';
+import { FrontendApplicationContribution, ApplicationShell } from '@theia/core/lib/browser';
+import { WorkspaceService } from '@theia/workspace/lib/browser';
+import { WidgetManager } from '@theia/core/lib/browser/widget-manager';
 
 @injectable()
-// Add contribution interface to be implemented, e.g. "CheckingAppContribution implements CommandContribution"
-export class CheckingAppContribution{
+export class CheckingAppContribution implements FrontendApplicationContribution {
 
+    @inject(WorkspaceService)
+    protected readonly workspaceService: WorkspaceService;
+
+    @inject(WidgetManager)
+    protected readonly widgetManager: WidgetManager;
+
+    @inject(ApplicationShell)
+    protected readonly shell: ApplicationShell;
+
+    async onStart(): Promise<void> {
+        if (!this.workspaceService.opened) {
+            console.log('No workspace selected.');
+            const widget = await this.widgetManager.getOrCreateWidget('startChecking:widget');
+            this.shell.addWidget(widget, { area: 'main' });
+            this.shell.activateWidget(widget.id);
+        } else {
+            console.log('A workspace is selected.');
+        }
+    }
 }
