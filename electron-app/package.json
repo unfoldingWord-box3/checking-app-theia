@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git@github.com:unfoldingWord-box3/checking-app-theia.git"
   },
-  "version": "0.9.0",
+  "version": "0.9.1",
   "main": "scripts/theia-electron-main.js",
   "theia": {
     "target": "electron",
