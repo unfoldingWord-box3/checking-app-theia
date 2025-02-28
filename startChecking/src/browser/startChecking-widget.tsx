@@ -9,7 +9,7 @@ import { Message } from '@theia/core/lib/browser';
 export class StartCheckingWidget extends ReactWidget {
 
     static readonly ID = 'startChecking:widget';
-    static readonly LABEL = 'StartChecking Widget';
+    static readonly LABEL = 'Start Checking';
 
     @inject(MessageService)
     protected readonly messageService!: MessageService;
@@ -48,5 +48,4 @@ export class StartCheckingWidget extends ReactWidget {
             htmlElement.focus();
         }
     }
-
 }
