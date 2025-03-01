@@ -43,6 +43,6 @@
     "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.14/checking-extension-0.9.14.vsix"
   },
   "workspaces": [
-    "CheckingApp", "browser-app", "electron-app"
+    "startChecking", "CheckingApp", "browser-app", "electron-app"
   ]
 }
