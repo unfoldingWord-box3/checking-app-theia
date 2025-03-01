@@ -50,8 +50,9 @@ export class StartCheckingWidget extends ReactWidget {
             canSelectFolders: true,
             canSelectFiles: false,
             title: 'Select a Folder',
-            // @ts-ignore
-            inputValue: '~/translationCore/otherProjects'
+            // TODO: this doesn't work:
+            // // @ts-ignore
+            // inputValue: '~/translationCore/otherProjects'
         };
         const folderUri = await this.fileDialogService.showOpenDialog(props);
         if (folderUri) {
