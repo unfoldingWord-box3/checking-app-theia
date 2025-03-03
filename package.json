@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@eclipse-dash/nodejs-wrapper": "^0.0.1",
-    "@theia/cli": "1.59.0-next.72",
+    "@theia/cli": "1.59.0",
     "@types/yargs": "17.0.7",
     "lerna": "^6.0.1",
     "rimraf": "^2.7.1",

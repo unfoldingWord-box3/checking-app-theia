@@ -18,6 +18,7 @@ Open http://localhost:3000 in the browser.
 ## Running the Electron example
 
     yarn && yarn build:dev && yarn download:plugins
+    yarn electron bundle:lib
     yarn electron package:preview
     yarn electron start
 
