@@ -19,7 +19,6 @@ Open http://localhost:3000 in the browser.
 
     yarn && yarn build:dev && yarn download:plugins
     yarn electron bundle:lib
-    yarn electron package:preview
     yarn electron start
 
 ~~*or:* launch `Start Electron Backend` configuration from VS code.~~
