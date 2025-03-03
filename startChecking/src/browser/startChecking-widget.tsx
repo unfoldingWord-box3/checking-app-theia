@@ -10,6 +10,7 @@ import { FileService } from '@theia/filesystem/lib/browser/file-service';
 import { URI } from '@theia/core/lib/common/uri';
 import {MetadataAlert} from "../MetadataAlertDialog";
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
+import { OpenerService } from '@theia/core/lib/browser';
 
 @injectable()
 export class StartCheckingWidget extends ReactWidget {
@@ -31,6 +32,9 @@ export class StartCheckingWidget extends ReactWidget {
 
     @inject(WorkspaceService)
     protected readonly workspaceService!: WorkspaceService;
+
+    @inject(OpenerService)
+    protected readonly openerService!: OpenerService;
 
     @postConstruct()
     protected init(): void {
@@ -166,11 +170,11 @@ export class StartCheckingWidget extends ReactWidget {
 
     protected async createNewProject(): Promise<void> {
         this.messageService.info('createNewProject');
-        let folderExists = false;
         const home = await this.getHomeFolder()
         const folderPath = new URI(`${home}/translationCore/otherProjects/EMPTY`);
 
         // Ensure the folder exists
+        let folderExists = false;
         try {
             const folderStat = await this.fileService.resolve(folderPath);
 
@@ -194,9 +198,17 @@ export class StartCheckingWidget extends ReactWidget {
             
             try {
                 const fileUri = new URI(`${folderPath}/empty.twl_check`);
-                const emptyContent = '';
-                await this.fileService.write(fileUri, emptyContent);
+                const emptyJson = '{ }';
+                await this.fileService.write(fileUri, emptyJson);
                 console.log(`File written successfully at: ${fileUri.path}`);
+                
+                try {
+                    // Open a new tab to view the file
+                    await this.openerService.getOpener(fileUri).then(opener => opener.open(fileUri));
+                    console.log(`File opened in a new tab: ${fileUri.path}`);
+                } catch (error) {
+                    console.error(`Failed to open file in a new tab: ${fileUri.path}`, error);
+                }
             } catch (error) {
                 console.error(`Failed to write file at: ${folderPath}/check.txt`, error);
             }
