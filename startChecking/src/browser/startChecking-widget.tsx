@@ -125,10 +125,14 @@ export class StartCheckingWidget extends ReactWidget {
                         const checkFileUri = folderUri.resolve(relativeCheckPath);
                         console.log(`selectExistingProject() checkFileUri: `, checkFileUri.path)
                         const checkData = await this.readFileAsText(checkFileUri)
-                        validWorkspace = checkData?.length > 0; // just make sure there is content
+                        validWorkspace = checkData?.length > 10; // just make sure there is content
                         if (validWorkspace) {
                             await this.workspaceService.open(folderUri);
                             this.messageService.info('Workspace opened: ' + folderUri.path.toString());
+
+                            // TODO - the open folder command above causes workspace to reload, so this does not work.
+                            //              perhaps there is a way to check if any tabs are open on startup?
+                            // await this.openFileTab(checkFileUri); // open checker
                         } else {
                             console.log(`${checkFileUri.path.toString()} is not valid checkData`, checkData)
                         }
@@ -202,18 +206,23 @@ export class StartCheckingWidget extends ReactWidget {
                 await this.fileService.write(fileUri, emptyJson);
                 console.log(`File written successfully at: ${fileUri.path}`);
                 
-                try {
-                    // Open a new tab to view the file
-                    await this.openerService.getOpener(fileUri).then(opener => opener.open(fileUri));
-                    console.log(`File opened in a new tab: ${fileUri.path}`);
-                } catch (error) {
-                    console.error(`Failed to open file in a new tab: ${fileUri.path}`, error);
-                }
+                await this.openFileTab(fileUri);
             } catch (error) {
                 console.error(`Failed to write file at: ${folderPath}/check.txt`, error);
             }
         }
     }
+
+    protected async openFileTab(fileUri: URI): Promise<void> {
+        try {
+            // Open a new tab to view the file
+            await this.openerService.getOpener(fileUri).then(opener => opener.open(fileUri));
+            console.log(`File opened in a new tab: ${fileUri.path}`);
+        } catch (error) {
+            console.error(`Failed to open file in a new tab: ${fileUri.path}`, error);
+        }
+    }
+
 
     protected onActivateRequest(msg: Message): void {
         super.onActivateRequest(msg);
