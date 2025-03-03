@@ -4,7 +4,7 @@ import { AlertMessage } from '@theia/core/lib/browser/widgets/alert-message';
 import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
 import { MessageService } from '@theia/core';
 import { Message } from '@theia/core/lib/browser';
-import { FileDialogService, OpenFileDialogProps } from '@theia/filesystem/lib/browser';
+import { DefaultFileDialogService, OpenFileDialogProps } from '@theia/filesystem/lib/browser';
 import { WorkspaceService } from '@theia/workspace/lib/browser';
 import { FileService } from '@theia/filesystem/lib/browser/file-service';
 import { URI } from '@theia/core/lib/common/uri';
@@ -20,8 +20,8 @@ export class StartCheckingWidget extends ReactWidget {
     @inject(MessageService)
     protected readonly messageService!: MessageService;
 
-    @inject(FileDialogService)
-    protected readonly fileDialogService!: FileDialogService;
+    @inject(DefaultFileDialogService)
+    protected readonly fileDialogService!: DefaultFileDialogService;
 
     @inject(FileService) // Inject FileService here
     protected readonly fileService!: FileService;
@@ -86,18 +86,28 @@ export class StartCheckingWidget extends ReactWidget {
     }
 
     protected async selectExistingProject(): Promise<void> {
+        const homeDir = await this.getHomeFolder()
+        const relativePath = 'translationCore/otherProjects';
+        const absolutePath = `${homeDir}/${relativePath}`; // Construct absolute path
+        const fileUri = new URI(absolutePath);      // Convert the absolute path to a URI
+        let defaultFolder;
+
+        try {
+            defaultFolder = await this.fileService.resolve(fileUri);
+            console.log(`FileStat: for ${absolutePath}`, defaultFolder);
+        } catch (error) {
+            console.error(`Error fetching FileStat for ${absolutePath}:`, error);
+        }
+
         const props: OpenFileDialogProps = {
             canSelectFolders: true,
             canSelectFiles: false,
-            title: 'Select a Folder',
-            // TODO: this doesn't work:
-            // // @ts-ignore
-            // inputValue: '~/translationCore/otherProjects'
+            title: 'Select a Folder'
         };
         
         let validWorkspace = false;
         
-        const folderUri = await this.fileDialogService.showOpenDialog(props);
+        const folderUri = await this.fileDialogService.showOpenDialog(props, defaultFolder);
         if (folderUri) {
             console.log(`selectExistingProject() Selected folder: `, folderUri.path)
             this.messageService.info('Selected folder: ' + folderUri.path.toString());
