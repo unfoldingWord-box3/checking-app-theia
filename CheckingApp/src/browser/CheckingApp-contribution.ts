@@ -17,12 +17,12 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
 
     async onStart(): Promise<void> {
         if (!this.workspaceService.opened) {
-            console.log('No workspace selected.');
+            console.log('CheckingAppContribution - No workspace selected - opening start checking widget.');
             const widget = await this.widgetManager.getOrCreateWidget('startChecking:widget');
             this.shell.addWidget(widget, { area: 'main' });
             this.shell.activateWidget(widget.id);
         } else {
-            console.log('A workspace is selected.');
+            console.log('CheckingAppContribution - A workspace is selected.');
         }
     }
 }
