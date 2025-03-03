@@ -7,9 +7,9 @@ import { Message } from '@theia/core/lib/browser';
 import { FileDialogService, OpenFileDialogProps } from '@theia/filesystem/lib/browser';
 import { WorkspaceService } from '@theia/workspace/lib/browser';
 import { FileService } from '@theia/filesystem/lib/browser/file-service';
-// import { FileUri } from '@theia/core/lib/node';
 import { URI } from '@theia/core/lib/common/uri';
 import {MetadataAlert} from "../MetadataAlertDialog";
+import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
 
 @injectable()
 export class StartCheckingWidget extends ReactWidget {
@@ -25,7 +25,10 @@ export class StartCheckingWidget extends ReactWidget {
 
     @inject(FileService) // Inject FileService here
     protected readonly fileService!: FileService;
-    
+
+    @inject(EnvVariablesServer)
+    protected readonly envVariablesServer: EnvVariablesServer
+
     @inject(WorkspaceService)
     protected readonly workspaceService!: WorkspaceService;
 
@@ -133,8 +136,61 @@ export class StartCheckingWidget extends ReactWidget {
         }
     }
 
-    protected createNewProject(): void {
+    protected async getHomeFolder(): Promise<string | undefined> {
+        let homePath = await this.envVariablesServer.getValue('HOME'); // Works on Linux/macOS
+        // For Windows, use 'USERPROFILE'
+        let userHome = homePath?.value 
+        if (!userHome) {
+            homePath = await this.envVariablesServer.getValue('USERPROFILE');
+            userHome = homePath?.value
+        }
+
+        if (userHome) {
+            console.log('User Home Folder:', userHome);
+            return userHome
+        } else {
+            console.error('Could not determine user home directory.');
+        }
+        return undefined;
+    }
+
+    protected async createNewProject(): Promise<void> {
         this.messageService.info('createNewProject');
+        let folderExists = false;
+        const home = await this.getHomeFolder()
+        const folderPath = new URI(`${home}/translationCore/otherProjects/EMPTY`);
+
+        // Ensure the folder exists
+        try {
+            const folderStat = await this.fileService.resolve(folderPath);
+
+            folderExists = folderStat.isDirectory
+            if (!folderExists) {
+                console.error(`Path exists but is not a directory: ${folderPath.path.toString()}`);
+            }
+        } catch (error) {
+            // Folder doesn't exist, so create it
+            try {
+                await this.fileService.createFolder(folderPath);
+                console.log(`Folder created at: ${folderPath}`);
+                folderExists = true;
+            } catch (createError) {
+                console.error(`Failed to create folder at: ${folderPath.path.toString()}`, createError);
+            }
+        }
+
+        if (folderExists) {
+            console.log('Folder verified and/or created successfully!');
+            
+            try {
+                const fileUri = new URI(`${folderPath}/empty.twl_check`);
+                const emptyContent = '';
+                await this.fileService.write(fileUri, emptyContent);
+                console.log(`File written successfully at: ${fileUri.path}`);
+            } catch (error) {
+                console.error(`Failed to write file at: ${folderPath}/check.txt`, error);
+            }
+        }
     }
 
     protected onActivateRequest(msg: Message): void {
