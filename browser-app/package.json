@@ -31,24 +31,25 @@
     }
   },
   "dependencies": {
-    "@theia/core": "1.58.3",
-    "@theia/filesystem": "1.58.3",
-    "@theia/messages": "1.58.3",
-    "@theia/mini-browser": "1.58.3",
-    "@theia/navigator": "1.58.3",
-    "@theia/outline-view": "1.58.3",
-    "@theia/plugin-ext-vscode": "1.58.3",
-    "@theia/preferences": "1.58.3",
-    "@theia/workspace": "1.58.3",
-    "CheckingApp": "0.0.1"
+    "@theia/core": "1.59.0",
+    "@theia/filesystem": "1.59.0",
+    "@theia/messages": "1.59.0",
+    "@theia/mini-browser": "1.59.0",
+    "@theia/navigator": "1.59.0",
+    "@theia/outline-view": "1.59.0",
+    "@theia/plugin-ext-vscode": "1.59.0",
+    "@theia/preferences": "1.59.0",
+    "@theia/workspace": "1.59.0",
+    "CheckingApp": "0.0.1",
+    "startChecking": "0.0.1"
   },
   "devDependencies": {
-    "@theia/cli": "1.59.0-next.72",
-    "@theia/native-webpack-plugin": "1.59.0-next.72",
+    "@theia/cli": "1.59.0",
+    "@theia/native-webpack-plugin": "1.59.0",
     "rimraf": "^2.7.1"
   },
   "scripts": {
-    "clean": "theia clean && rimraf node_modules",
+    "clean": "theia clean && rimraf src-gen && rimraf node_modules",
     "build": "yarn -s rebuild && theia build --app-target=\"browser\" --mode development",
     "build:prod": "yarn -s rebuild && theia  build --app-target=\"browser\"",
     "rebuild": "theia rebuild:browser --cacheRoot ..",

@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@eclipse-dash/nodejs-wrapper": "^0.0.1",
-    "@theia/cli": "1.59.0-next.72",
+    "@theia/cli": "1.59.0",
     "@types/yargs": "17.0.7",
     "lerna": "^6.0.1",
     "rimraf": "^2.7.1",
@@ -40,9 +40,9 @@
   },
   "theiaPluginsDir": "plugins",
   "theiaPlugins": {
-    "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.14/checking-extension-0.9.14.vsix"
+    "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.15/checking-extension-0.9.15.vsix"
   },
   "workspaces": [
-    "CheckingApp", "browser-app", "electron-app"
+    "startChecking", "CheckingApp", "browser-app", "electron-app"
   ]
 }

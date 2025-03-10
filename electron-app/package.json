@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git@github.com:unfoldingWord-box3/checking-app-theia.git"
   },
-  "version": "0.9.1",
+  "version": "0.9.2",
   "main": "scripts/theia-electron-main.js",
   "theia": {
     "target": "electron",
@@ -46,20 +46,21 @@
     }
   },
   "dependencies": {
-    "@theia/core": "1.58.3",
-    "@theia/electron": "1.58.3",
-    "@theia/filesystem": "1.58.3",
-    "@theia/messages": "1.58.3",
-    "@theia/mini-browser": "1.58.3",
-    "@theia/navigator": "1.58.3",
-    "@theia/outline-view": "1.58.3",
-    "@theia/plugin-ext-vscode": "1.58.3",
-    "@theia/preferences": "1.58.3",
-    "@theia/workspace": "1.58.3",
-    "CheckingApp": "0.0.1"
+    "@theia/core": "1.59.0",
+    "@theia/electron": "1.59.0",
+    "@theia/filesystem": "1.59.0",
+    "@theia/messages": "1.59.0",
+    "@theia/mini-browser": "1.59.0",
+    "@theia/navigator": "1.59.0",
+    "@theia/outline-view": "1.59.0",
+    "@theia/plugin-ext-vscode": "1.59.0",
+    "@theia/preferences": "1.59.0",
+    "@theia/workspace": "1.59.0",
+    "CheckingApp": "0.0.1",
+    "startChecking": "0.0.1"
   },
   "devDependencies": {
-    "@theia/cli": "1.58.3",
+    "@theia/cli": "1.59.0",
     "electron": "30.5.1",
     "electron-builder": "^25.1.8",
     "electron-chromedriver": "^28.2.8",
@@ -68,7 +69,7 @@
     "fs-extra": "^9.0.1",
     "rimraf": "^2.7.1",
     "ts-node": "^10.0.0",
-    "@theia/native-webpack-plugin": "1.59.0-next.72"
+    "@theia/native-webpack-plugin": "1.59.0"
   },
   "scripts": {
     "clean": "theia clean && yarn clean:dist && rimraf node_modules",
