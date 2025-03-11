@@ -10,10 +10,19 @@ export class CheckingAppMenuContribution implements MenuContribution {
             '6_debug',
 
             // from "1_file"
+            "2_workspace",
             "3_save",
             "4_autosave",
             "4_downloadupload",
             "5_settings",
+
+            // from "2_edit"
+            "3_find",
+
+            // from "4_views": 
+            "0_primary",
+            "1_appearance",
+            "4_toggle"
         ]
         // drop menus
         removeMenuNodes.forEach(id => {
@@ -29,6 +38,19 @@ export class CheckingAppMenuContribution implements MenuContribution {
             // from "2_open": 
             "workspace:open",
             "workspace:openWorkspace",
+
+            // from "4_views": [
+            "callhierarchy:toggle",
+            "debug:toggle",
+            "debug:console:toggle",
+            // "fileNavigator:toggle",
+            "outlineView:toggle",
+            "output:toggle",
+            "pluginsView:toggle",
+            "problemsView:toggle",
+            "search-in-workspace.toggle",
+            "scmView:toggle",
+            "typehierarchy:toggle"
         ]
         // drop menus
         removeMenuActions.forEach(id => {
@@ -84,7 +106,25 @@ export class CheckingAppMenuContribution implements MenuContribution {
 //                     "search-in-workspace.open",
 //                     "search-in-workspace.replace"
 //                 ]
-//         }
-//     ],
+//         },
+//     "4_view": {
+//         "0_primary",
+//         "1_appearance",
+//         "2_views": [
+//             "callhierarchy:toggle",
+//             "debug:toggle",
+//             "debug:console:toggle",
+//             "fileNavigator:toggle",
+//             "outlineView:toggle",
+//             "output:toggle",
+//             "pluginsView:toggle",
+//             "problemsView:toggle",
+//             "search-in-workspace.toggle",
+//             "scmView:toggle",
+//             "typehierarchy:toggle"
+//         ],
+//         "4_toggle"
+//     }
+//
 //     "9_help": []
 // }
