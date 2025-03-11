@@ -5,7 +5,7 @@ The example of how to build the Theia-based applications with the CheckingApp.
 
 Please install all necessary [prerequisites](https://github.com/eclipse-theia/theia/blob/master/doc/Developing.md#prerequisites).
 
-## Running the browser example
+### Running the browser example
 
     yarn && yarn build:dev && yarn download:plugins
     yarn browser build
@@ -15,7 +15,7 @@ Please install all necessary [prerequisites](https://github.com/eclipse-theia/th
 
 Open http://localhost:3000 in the browser.
 
-## Running the Electron example
+### Running the Electron example
 
     yarn && yarn build:dev && yarn download:plugins
     yarn electron bundle:lib
@@ -24,7 +24,7 @@ Open http://localhost:3000 in the browser.
 ~~*or:* launch `Start Electron Backend` configuration from VS code.~~
 
 
-## Developing with the browser example
+### Developing with the browser example
 
 Start watching all packages of your application with
 
@@ -32,7 +32,7 @@ Start watching all packages of your application with
 
 Run the example as [described above](#Running-the-browser-example)
 
-## Developing with the Electron example
+### Developing with the Electron example
 
 Start watching all packages, including `electron-app`, of your application with
 
@@ -41,7 +41,7 @@ Start watching all packages, including `electron-app`, of your application with
 
 Run the example as [described above](#Running-the-Electron-example)
 
-## Publishing CheckingApp
+### Publishing CheckingApp
 
 Create a npm user and login to the npm registry, [more on npm publishing](https://docs.npmjs.com/getting-started/publishing-npm-packages).
 
@@ -51,7 +51,7 @@ Publish packages with lerna to update versions properly across local packages, [
 
     npx lerna publish
 
-## Creating installer for CheckingApp
+### Creating installer for CheckingApp
 
 Build the theia app
 
@@ -62,3 +62,11 @@ Create the application installer.
     yarn electron bundle:lib
     yarn package:applications
 
+## Code
+- Modules:
+  - browser-app - used for testing in browser only
+  - CheckingApp - startup code
+    - see business logic in `CheckingApp/src/browser/CheckingApp-contribution.ts`
+  - electron-app - used for testing in electron and for packaging app
+  - startChecking - start checking widget
+    - widget UI `startChecking/src/browser/startChecking-widget.tsx`
