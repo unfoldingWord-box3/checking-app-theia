@@ -11,55 +11,151 @@ import { URI } from '@theia/core/lib/common/uri';
 import {MetadataAlert} from "../MetadataAlertDialog";
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
 import { OpenerService } from '@theia/core/lib/browser';
+import {CommandRegistry} from "@theia/core/lib/common/command";
 
+/**
+ * The `StartCheckingWidget` class is a React-based widget that is used to prompt the user
+ * to either select an existing project or create a new one for "checking" operations.
+ *
+ * It leverages Theia framework's dependency injection and provides a GUI for managing projects.
+ */
 @injectable()
 export class StartCheckingWidget extends ReactWidget {
-
+    // Unique ID for the widget.
     static readonly ID = 'startChecking:widget';
+    // Visible label for the widget.
     static readonly LABEL = 'Start Checking';
 
+    // Message service for displaying alerts, notifications, or feedback to the user.
     @inject(MessageService)
     protected readonly messageService!: MessageService;
 
+    // Service for displaying file dialogs (e.g., open file dialog).
     @inject(DefaultFileDialogService)
     protected readonly fileDialogService!: DefaultFileDialogService;
 
-    @inject(FileService) // Inject FileService here
+    // Service for performing file operations (e.g., reading, writing files).
+    @inject(FileService)
     protected readonly fileService!: FileService;
 
+    // Provides access to environment variables.
     @inject(EnvVariablesServer)
-    protected readonly envVariablesServer: EnvVariablesServer
+    protected readonly envVariablesServer: EnvVariablesServer;
 
+    // Handles workspace-related operations, such as retrieving workspace URIs.
     @inject(WorkspaceService)
     protected readonly workspaceService!: WorkspaceService;
 
+    // Service for opening resources in appropriate editors.
     @inject(OpenerService)
     protected readonly openerService!: OpenerService;
 
+    // inject the CommandRegistry
+    @inject(CommandRegistry)
+    protected readonly commandRegistry: CommandRegistry;
+
+
+    /**
+     * Initializes the widget after its construction using the `@postConstruct` lifecycle hook.
+     * Calls the `doInit` method to configure widget properties.
+     */
     @postConstruct()
     protected init(): void {
         this.doInit();
     }
-
+    
+    /**
+     * Configures the basic properties of the widget, such as its ID, label, caption,
+     * and initial state.
+     */
     protected async doInit(): Promise<void> {
-        this.id = StartCheckingWidget.ID;
-        this.title.label = StartCheckingWidget.LABEL;
-        this.title.caption = StartCheckingWidget.LABEL;
-        this.title.closable = true;
-        this.title.iconClass = 'fa fa-window-maximize'; // example widget icon.
-        this.update();
+        this.id = StartCheckingWidget.ID; // Assigns a unique ID to the widget.
+        this.title.label = StartCheckingWidget.LABEL; // Sets the widget label.
+        this.title.caption = StartCheckingWidget.LABEL; // Sets the widget tooltip caption.
+        this.title.closable = true; // Allows the widget to be closed by the user.
+        this.title.iconClass = 'fa fa-external-link'; // Sets an icon class for the widget header.
+        this.update(); // Updates the UI to reflect any changes.
     }
 
+    
+    /**
+     * Renders the React-based content for the widget.
+     * This includes a message prompting the user to select or create a project,
+     * along with the associated buttons.
+     *
+     * @returns {React.ReactElement} The rendered UI.
+     */
     render(): React.ReactElement {
+        const projectSelected = this.workspaceService.opened
+        
         const header = `You have not selected a project for checking. Either select an existing checking project or create a new one.`;
-        return <div id='widget-container'>
-            <AlertMessage type='INFO' header={header} />
-            <button id='selectProjectButton' className='theia-button secondary' title='Select Existing Project' onClick={_a => this.selectExistingProject()}>Select Existing Project</button>
-            <button id='newProjectButton' className='theia-button secondary' title='Create New Project' onClick={_a => this.createNewProject()}>Create New Project</button>
-        </div>;
+        return (
+            <div id="widget-container">
+                <AlertMessage type="INFO" header={header} />
+                <hr/>
+                <button
+                    id="selectProjectButton"
+                    className="theia-button secondary"
+                    title="Select Existing Project"
+                    onClick={_a => this.selectExistingProject()}
+                >
+                    Select Existing Project
+                </button>
+                <hr/>
+                <button
+                    id="newProjectButton"
+                    className="theia-button secondary"
+                    title="Create New Project"
+                    onClick={_a => this.createNewProject()}
+                >
+                    Create New Project
+                </button>
+                {
+                    projectSelected &&
+                  <>
+                  <hr/>
+                      <button
+                        id="openTnotesButton"
+                        className="theia-button secondary"
+                        title="Check translationNotes"
+                        onClick={_a => this.executeVSCodeCommand("checking-extension.checkTNotes")}
+                      >
+                        Check translationNotes
+                      </button>
+                  <hr/>
+                    <button
+                      id="openTwordsButton"
+                      className="theia-button secondary"
+                      title="Check translationWords"
+                      onClick={_a => this.executeVSCodeCommand("checking-extension.checkTWords")}
+                    >
+                      Check translationWords
+                    </button>
+                  </>
+                }
+            </div>
+        );
     }
 
-    protected async readMetadata(workspaceUri:URI): Promise<any> {
+
+// Then you can execute the command
+    protected async executeVSCodeCommand(command: string): Promise<void> {
+        try {
+            console.log('executeVSCodeCommand:', command);
+            // Execute the command by its ID
+            await this.commandRegistry.executeCommand(command);
+        } catch (error) {
+            console.error('executeVSCodeCommand: Failed to execute command:', error);
+        }
+    }
+
+    /**
+     * Reads the metadata information from a `metadata.json` file located in the provided workspace URI.
+     *
+     * @param workspaceUri - The URI of the workspace to read metadata from.
+     * @returns {Promise<any>} A promise resolving to the metadata as a JSON object, or null on failure.
+     */
+    protected async readMetadata(workspaceUri: URI): Promise<any> {
         try {
             const metadataUri = new URI(`${workspaceUri}/metadata.json`);
             console.log('metadataUri:', metadataUri);
@@ -67,28 +163,40 @@ export class StartCheckingWidget extends ReactWidget {
             // Read the contents of metadata.json
             const fileContent = await this.fileService.read(metadataUri);
             const jsonData = JSON.parse(fileContent.value); // Parse JSON
-
             console.log('Metadata content:', jsonData);
             return jsonData;
         } catch (error) {
             console.error('Failed to read metadata.json:', error);
-            return null;
+            return null; // Return null if metadata could not be read.
         }
     }
-    
+
+    /**
+     * Reads the file content of the specified URI and returns it as a string.
+     *
+     * @param fileUri - The URI of the file to read.
+     * @returns {Promise<string>} A promise resolving to the text content of the file.
+     * @throws Will throw an error if the file cannot be read.
+     */
     protected async readFileAsText(fileUri: URI): Promise<string> {
         try {
             // Use FileService to read the file content
             const fileContent = await this.fileService.read(fileUri);
             console.log('fileContent:', fileContent);
-            // File content is inside the `value` property as a string
+            // File content is returned inside the `value` property as a string.
             return fileContent.value;
         } catch (error) {
             console.error(`Failed to read file at URI: ${fileUri.toString()}`, error);
             throw new Error(`Could not read the file: ${error.message}`);
         }
     }
-
+    
+    /**
+     * Prompts the user to select an existing project folder, validates the folder as a checking project, and opens it as a workspace.
+     * It ensures the selected folder contains valid metadata and necessary project files.
+     *
+     * @return {Promise<void>} A promise that resolves after the folder has been processed and, if valid, added as the current workspace.
+     */
     protected async selectExistingProject(): Promise<void> {
         const homeDir = await this.getHomeFolder()
         const relativePath = 'translationCore/otherProjects';
@@ -154,6 +262,14 @@ export class StartCheckingWidget extends ReactWidget {
         }
     }
 
+    /**
+     * Retrieves the home folder path of the current user by checking the system environment variables.
+     * First, it attempts to fetch the 'HOME' variable (Linux/macOS).
+     * If not found, it checks for the 'USERPROFILE' variable (Windows).
+     *
+     * @return {Promise<string | undefined>} A promise that resolves to the user's home folder path as a string,
+     * or undefined if the path could not be determined.
+     */
     protected async getHomeFolder(): Promise<string | undefined> {
         let homePath = await this.envVariablesServer.getValue('HOME'); // Works on Linux/macOS
         // For Windows, use 'USERPROFILE'
@@ -171,7 +287,19 @@ export class StartCheckingWidget extends ReactWidget {
         }
         return undefined;
     }
-
+    
+    /**
+     * This is used to display to open the checking-tool-extension UI on an empty project.
+     *  This in turn will walk user through process of creating a new checking project
+     *  
+     * Creates a new project directory and an empty JSON file within it. If the directory
+     * does not exist, it is created. An empty JSON file is generated within the directory
+     * and a new tab is opened to display the file. If the directory already exists but
+     * is not a folder, an error is logged.
+     *
+     * @return {Promise<void>} A promise that resolves when the project creation and
+     * file write process is completed.
+     */
     protected async createNewProject(): Promise<void> {
         this.messageService.info('createNewProject');
         const home = await this.getHomeFolder()
@@ -213,6 +341,12 @@ export class StartCheckingWidget extends ReactWidget {
         }
     }
 
+    /**
+     * Opens a file in a new tab using the provided URI.
+     *
+     * @param {URI} fileUri - The URI of the file to be opened.
+     * @return {Promise<void>} A promise that resolves when the file is successfully opened.
+     */
     protected async openFileTab(fileUri: URI): Promise<void> {
         try {
             // Open a new tab to view the file
@@ -223,7 +357,13 @@ export class StartCheckingWidget extends ReactWidget {
         }
     }
 
-
+    /**
+     * Handles the activation request for the component.
+     * Focuses on the HTML element with the ID 'displayMessageButton' if it exists.
+     *
+     * @param {Message} msg - The activation message triggering this request.
+     * @return {void} This method does not return a value.
+     */
     protected onActivateRequest(msg: Message): void {
         super.onActivateRequest(msg);
         const htmlElement = document.getElementById('displayMessageButton');

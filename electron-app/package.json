@@ -72,7 +72,7 @@
     "@theia/native-webpack-plugin": "1.59.0"
   },
   "scripts": {
-    "clean": "theia clean && yarn clean:dist && rimraf node_modules",
+    "clean": "yarn clean:dist && rimraf node_modules && rimraf lib && theia clean",
     "clean:dist": "rimraf dist",
     "bundle:lib": "yarn rebuild && theia build --mode development",
     "build": "yarn rebuild && theia build --app-target=\"electron\" --mode development",

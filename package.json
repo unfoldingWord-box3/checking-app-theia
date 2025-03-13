@@ -5,7 +5,8 @@
     "node": ">=18"
   },
   "scripts": {
-    "clean": "lerna clean  --yes --concurrency 1 && rimraf .browser_modules && rimraf node_modules",
+    "clean": "yarn clean-all && lerna clean  --yes --concurrency 1 && rimraf .browser_modules && rimraf node_modules",
+    "clean-all": "lerna exec -- yarn clean",
     "build": "yarn build:applications",
     "build:dev": "yarn build:applications:dev",
     "build:applications": "lerna run build:prod --concurrency 1",
@@ -40,7 +41,7 @@
   },
   "theiaPluginsDir": "plugins",
   "theiaPlugins": {
-    "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.15/checking-extension-0.9.15.vsix"
+    "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.17/checking-extension-0.9.17.vsix"
   },
   "workspaces": [
     "startChecking", "CheckingApp", "browser-app", "electron-app"

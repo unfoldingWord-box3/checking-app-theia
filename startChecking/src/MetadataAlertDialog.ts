@@ -1,23 +1,6 @@
 
 import { ConfirmDialog } from '@theia/core/lib/browser/dialogs';
 
-export class MetadataAlert {
-    async showModal(msg: string): Promise<void> {
-        // Create and show a modal dialog
-        const dialog = new ConfirmDialog({
-            title: 'Alert',  // Modal title
-            msg: msg,        // Content message passed as a property
-            ok: 'OK'         // Button label for acknowledgment
-        });
-
-        // Display the modal
-        await dialog.open();
-    }
-}
-// ```
-//
-// ---
-//
 // ### Explanation:
 //
 // 1. **`ConfirmDialog` Class**:
@@ -42,3 +25,17 @@ export class MetadataAlert {
 // When this code is invoked, a modal dialog with the message `"No metadata.json found."` will appear, requiring the user to acknowledge it by clicking **OK**.
 //
 // If you need help adding other enhanced modal features, let me know!
+
+export class MetadataAlert {
+    async showModal(msg: string): Promise<void> {
+        // Create and show a modal dialog
+        const dialog = new ConfirmDialog({
+            title: 'Alert',  // Modal title
+            msg: msg,        // Content message passed as a property
+            ok: 'OK'         // Button label for acknowledgment
+        });
+
+        // Display the modal
+        await dialog.open();
+    }
+}
