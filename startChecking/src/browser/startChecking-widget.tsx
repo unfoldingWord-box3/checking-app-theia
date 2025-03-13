@@ -11,6 +11,7 @@ import { URI } from '@theia/core/lib/common/uri';
 import {MetadataAlert} from "../MetadataAlertDialog";
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
 import { OpenerService } from '@theia/core/lib/browser';
+import {CommandRegistry} from "@theia/core/lib/common/command";
 
 /**
  * The `StartCheckingWidget` class is a React-based widget that is used to prompt the user
@@ -49,6 +50,11 @@ export class StartCheckingWidget extends ReactWidget {
     @inject(OpenerService)
     protected readonly openerService!: OpenerService;
 
+    // inject the CommandRegistry
+    @inject(CommandRegistry)
+    protected readonly commandRegistry: CommandRegistry;
+
+
     /**
      * Initializes the widget after its construction using the `@postConstruct` lifecycle hook.
      * Calls the `doInit` method to configure widget properties.
@@ -67,7 +73,7 @@ export class StartCheckingWidget extends ReactWidget {
         this.title.label = StartCheckingWidget.LABEL; // Sets the widget label.
         this.title.caption = StartCheckingWidget.LABEL; // Sets the widget tooltip caption.
         this.title.closable = true; // Allows the widget to be closed by the user.
-        this.title.iconClass = 'fa fa-window-maximize'; // Sets an icon class for the widget header.
+        this.title.iconClass = 'fa fa-external-link'; // Sets an icon class for the widget header.
         this.update(); // Updates the UI to reflect any changes.
     }
 
@@ -86,6 +92,7 @@ export class StartCheckingWidget extends ReactWidget {
         return (
             <div id="widget-container">
                 <AlertMessage type="INFO" header={header} />
+                <hr/>
                 <button
                     id="selectProjectButton"
                     className="theia-button secondary"
@@ -94,6 +101,7 @@ export class StartCheckingWidget extends ReactWidget {
                 >
                     Select Existing Project
                 </button>
+                <hr/>
                 <button
                     id="newProjectButton"
                     className="theia-button secondary"
@@ -104,17 +112,41 @@ export class StartCheckingWidget extends ReactWidget {
                 </button>
                 {
                     projectSelected &&
-                  <button
-                    id="openCheckerButton"
-                    className="theia-button secondary"
-                    title="Open Checker"
-                    onClick={_a => this.createNewProject()}
-                  >
-                    Open Checker
-                  </button>
+                  <>
+                  <hr/>
+                      <button
+                        id="openTnotesButton"
+                        className="theia-button secondary"
+                        title="Check translationNotes"
+                        onClick={_a => this.executeVSCodeCommand("checking-extension.checkTNotes")}
+                      >
+                        Check translationNotes
+                      </button>
+                  <hr/>
+                    <button
+                      id="openTwordsButton"
+                      className="theia-button secondary"
+                      title="Check translationWords"
+                      onClick={_a => this.executeVSCodeCommand("checking-extension.checkTWords")}
+                    >
+                      Check translationWords
+                    </button>
+                  </>
                 }
             </div>
         );
+    }
+
+
+// Then you can execute the command
+    protected async executeVSCodeCommand(command: string): Promise<void> {
+        try {
+            console.log('executeVSCodeCommand:', command);
+            // Execute the command by its ID
+            await this.commandRegistry.executeCommand(command);
+        } catch (error) {
+            console.error('executeVSCodeCommand: Failed to execute command:', error);
+        }
     }
 
     /**
