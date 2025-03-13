@@ -53,8 +53,7 @@ export class StartCheckingWidget extends ReactWidget {
     // inject the CommandRegistry
     @inject(CommandRegistry)
     protected readonly commandRegistry: CommandRegistry;
-
-
+    
     /**
      * Initializes the widget after its construction using the `@postConstruct` lifecycle hook.
      * Calls the `doInit` method to configure widget properties.
@@ -76,7 +75,6 @@ export class StartCheckingWidget extends ReactWidget {
         this.title.iconClass = 'fa fa-external-link'; // Sets an icon class for the widget header.
         this.update(); // Updates the UI to reflect any changes.
     }
-
     
     /**
      * Renders the React-based content for the widget.
@@ -86,7 +84,7 @@ export class StartCheckingWidget extends ReactWidget {
      * @returns {React.ReactElement} The rendered UI.
      */
     render(): React.ReactElement {
-        const projectSelected = this.workspaceService.opened
+        const projectSelected = this.workspaceService.opened;
         
         const header = `You have not selected a project for checking. Either select an existing checking project or create a new one.`;
         return (

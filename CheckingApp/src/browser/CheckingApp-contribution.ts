@@ -23,32 +23,73 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
     protected readonly widgetManager: WidgetManager;
 
     @inject(ApplicationShell)
-    protected readonly shell: ApplicationShell;
+    protected readonly applicationShell: ApplicationShell;
 
-    /**
-     * Handles the initialization process when the application starts.
-     * If no workspace is selected, it creates and opens a widget in the application's main area.
-     * Otherwise, logs a message indicating a workspace is selected.
-     *
-     * @return {Promise<void>} A promise that resolves when the initialization process is completed.
-     */
-    async onStart(): Promise<void> {
+    // If you need more details about each tab
+    protected getLeftSidebarTabs(): Array<{ id: string, label: string }> {
+        const leftArea = this.applicationShell.leftPanelHandler;
+        const tabBar = leftArea.tabBar;
 
-        console.log('CheckingAppContribution.onStart()');
-        
-        if (!this.workspaceService.opened) {
-            console.log('CheckingAppContribution.onStart() - No workspace selected - opening start checking widget.');
-            const widget = await this.widgetManager.getOrCreateWidget('startChecking:widget');
-            await this.shell.addWidget(widget, { area: 'main' });
-            await this.shell.activateWidget(widget.id);
-        } else {
-            console.log('CheckingAppContribution.onStart() - A workspace is selected.');
+        return tabBar.titles.map(title => ({
+            id: title.owner.id,
+            label: title.label
+        }));
+    }
+
+    protected async removeLeftSidebarTabs(removeTabs: string[]): Promise<void> {
+        const leftArea = this.applicationShell.leftPanelHandler;
+
+        // Get all widgets in the left area
+        const widgets = leftArea.tabBar.titles.map(title => title.owner);
+
+        // Remove each widget that matches the removeTabs list
+        for (const widget of widgets) {
+            if (removeTabs.includes(widget.id)) {
+                widget.dispose();
+            }
         }
 
-        // Wait for the shell to be ready
-        await this.shell.pendingUpdates;
+        // Ensure the shell updates
+        await this.applicationShell.pendingUpdates;
+    }
 
-        // Collapse the left area (where explorer is located)
-        await this.shell.collapsePanel('left');
+    /**
+     * Initializes the layout when the application starts.
+     * This method is invoked after the application shell is ready.
+     * It removes unwanted tabs from the left sidebar, collapses the panel if a workspace is selected,
+     * or opens and activates the start checking widget if no workspace is selected.
+     *
+     * @return {Promise<void>} A promise that resolves once the layout initialization is completed.
+     */
+    async onDidInitializeLayout(): Promise<void> {
+        console.log('CheckingAppContribution.onDidInitializeLayout()');
+
+        // Wait for the shell to be ready
+        await this.applicationShell.pendingUpdates;
+
+        const tabs = this.getLeftSidebarTabs();
+        console.log('CheckingAppContribution.onDidInitializeLayout() - Tabs: ', tabs);
+
+        const removeTabs = [
+            // "explorer-view-container",
+            "search-view-container",
+            "scm-view-container",
+            "debug",
+            "test-view-container"
+        ]
+
+        // Remove unwanted tabs
+        await this.removeLeftSidebarTabs(removeTabs);
+
+        if (this.workspaceService.opened) {
+            console.log('CheckingAppContribution.onDidInitializeLayout() - A workspace is selected.');
+            // Collapse the left area (where explorer is located)
+            await this.applicationShell.collapsePanel('left');
+        } else {
+            console.log('CheckingAppContribution.onDidInitializeLayout() - No workspace selected - opening start checking widget.');
+            const widget = await this.widgetManager.getOrCreateWidget('startChecking:widget');
+            await this.applicationShell.addWidget(widget, { area: 'main' });
+            await this.applicationShell.activateWidget(widget.id);
+        }
     }
 }
