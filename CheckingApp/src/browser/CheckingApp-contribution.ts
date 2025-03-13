@@ -49,6 +49,6 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
         await this.shell.pendingUpdates;
 
         // Collapse the left area (where explorer is located)
-        this.shell.collapsePanel('left');
+        await this.shell.collapsePanel('left');
     }
 }
