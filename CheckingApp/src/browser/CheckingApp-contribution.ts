@@ -3,6 +3,16 @@ import { FrontendApplicationContribution, ApplicationShell } from '@theia/core/l
 import { WorkspaceService } from '@theia/workspace/lib/browser';
 import { WidgetManager } from '@theia/core/lib/browser/widget-manager';
 
+/**
+ * The `CheckingAppContribution` class implements the `FrontendApplicationContribution` interface
+ * to handle the application lifecycle events and provide functionality related to the workspace and widgets.
+ * It initializes the application behavior at startup, ensuring proper handling of cases where no workspace is selected.
+ *
+ * Dependencies:
+ * - `WorkspaceService`: Used to check the state of the workspace.
+ * - `WidgetManager`: Used to create or retrieve widgets.
+ * - `ApplicationShell`: Used to manage the application's UI shell.
+ */
 @injectable()
 export class CheckingAppContribution implements FrontendApplicationContribution {
 
@@ -23,13 +33,22 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
      * @return {Promise<void>} A promise that resolves when the initialization process is completed.
      */
     async onStart(): Promise<void> {
+
+        console.log('CheckingAppContribution.onStart()');
+        
         if (!this.workspaceService.opened) {
-            console.log('CheckingAppContribution - No workspace selected - opening start checking widget.');
+            console.log('CheckingAppContribution.onStart() - No workspace selected - opening start checking widget.');
             const widget = await this.widgetManager.getOrCreateWidget('startChecking:widget');
-            this.shell.addWidget(widget, { area: 'main' });
-            this.shell.activateWidget(widget.id);
+            await this.shell.addWidget(widget, { area: 'main' });
+            await this.shell.activateWidget(widget.id);
         } else {
-            console.log('CheckingAppContribution - A workspace is selected.');
+            console.log('CheckingAppContribution.onStart() - A workspace is selected.');
         }
+
+        // Wait for the shell to be ready
+        await this.shell.pendingUpdates;
+
+        // Collapse the left area (where explorer is located)
+        this.shell.collapsePanel('left');
     }
 }
