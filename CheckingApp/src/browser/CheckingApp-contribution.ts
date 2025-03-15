@@ -2,6 +2,19 @@ import { injectable, inject } from 'inversify';
 import { FrontendApplicationContribution, ApplicationShell } from '@theia/core/lib/browser';
 import { WorkspaceService } from '@theia/workspace/lib/browser';
 import { WidgetManager } from '@theia/core/lib/browser/widget-manager';
+import { EditorManager } from '@theia/editor/lib/browser';
+import { DisposableCollection } from '@theia/core';
+
+/**
+ * wraps timer in a Promise to make an async function that continues after a specific number of milliseconds.
+ * @param {number} ms
+ * @returns {Promise<unknown>}
+ */
+export function delay(ms:number) {
+    return new Promise((resolve) =>
+        setTimeout(resolve, ms)
+    );
+}
 
 /**
  * The `CheckingAppContribution` class implements the `FrontendApplicationContribution` interface
@@ -15,6 +28,7 @@ import { WidgetManager } from '@theia/core/lib/browser/widget-manager';
  */
 @injectable()
 export class CheckingAppContribution implements FrontendApplicationContribution {
+    protected readonly toDispose = new DisposableCollection();
 
     @inject(WorkspaceService)
     protected readonly workspaceService: WorkspaceService;
@@ -24,6 +38,10 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
 
     @inject(ApplicationShell)
     protected readonly applicationShell: ApplicationShell;
+
+    @inject(EditorManager)
+    protected readonly editorManager: EditorManager;
+
 
     // If you need more details about each tab
     protected getLeftSidebarTabs(): Array<{ id: string, label: string }> {
@@ -53,6 +71,57 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
         await this.applicationShell.pendingUpdates;
     }
 
+    protected getDetailedOpenEditors(): Array<{
+        uri: string,
+        title: string,
+        isDirty: boolean,
+        isActive: boolean
+    }> {
+        const activeEditor = this.editorManager.activeEditor;
+
+        return this.editorManager.all.map(editor => ({
+            // @ts-ignore
+            uri: editor.uri.toString(),
+            title: editor.title.label,
+            // @ts-ignore
+            isDirty: editor.dirty,
+            isActive: editor === activeEditor
+        }));
+    }
+
+    protected setupEditorTracking(): void {
+        // Listen for active widget changes in the shell
+        this.toDispose.push(
+            this.applicationShell.onDidChangeActiveWidget(async () => {
+                const activeEditor = this.editorManager.activeEditor;
+                if (activeEditor) {
+                    console.log('Active editor changed:', activeEditor.title.label);
+                } else {
+                    console.log('No active editor');
+                }
+            })
+        );
+
+        // Listen for all widgets added or removed in the shell
+        this.toDispose.push(
+            this.applicationShell.onDidAddWidget(() => {
+                const openEditors = this.getDetailedOpenEditors();
+                console.log('onDidAddWidget - Updated list of open editors:', openEditors);
+            })
+        );
+        this.toDispose.push(
+            this.applicationShell.onDidRemoveWidget(() => {
+                const openEditors = this.getDetailedOpenEditors();
+                console.log('onDidRemoveWidget - Updated list of open editors:', openEditors);
+            })
+        );
+    }
+
+    // Add cleanup when the contribution is stopped
+    onStop(): void {
+        this.toDispose.dispose();
+    }
+
     /**
      * Initializes the layout when the application starts.
      * This method is invoked after the application shell is ready.
@@ -64,6 +133,9 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
     async onDidInitializeLayout(): Promise<void> {
         console.log('CheckingAppContribution.onDidInitializeLayout()');
 
+        // Setup editor tracking
+        // this.setupEditorTracking(); // TODO this breaks editor startup
+        
         // Wait for the shell to be ready
         await this.applicationShell.pendingUpdates;
 
@@ -91,5 +163,11 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
             await this.applicationShell.addWidget(widget, { area: 'main' });
             await this.applicationShell.activateWidget(widget.id);
         }
+        
+        delay(10000).then(() => { // delay for editors to open
+            const editors = this.getDetailedOpenEditors();
+
+            console.log('CheckingAppContribution.onDidInitializeLayout() - Editors: ', editors);
+        })
     }
 }

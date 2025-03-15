@@ -75,7 +75,7 @@ export class StartCheckingWidget extends ReactWidget {
         this.title.iconClass = 'fa fa-external-link'; // Sets an icon class for the widget header.
         this.update(); // Updates the UI to reflect any changes.
     }
-    
+
     /**
      * Renders the React-based content for the widget.
      * This includes a message prompting the user to select or create a project,
@@ -84,8 +84,22 @@ export class StartCheckingWidget extends ReactWidget {
      * @returns {React.ReactElement} The rendered UI.
      */
     render(): React.ReactElement {
-        const projectSelected = this.workspaceService.opened;
-        
+        return <this.WidgetContent projectSelected={this.workspaceService.opened}/>;
+    }
+
+    /**
+     * WidgetContent is a React functional component that renders a widget
+     * for managing project-related actions such as selecting an existing project,
+     * creating a new one, or performing checks on translation resources if a project is selected.
+     *
+     * @typedef {Object} Props
+     * @property {boolean} projectSelected - Indicates whether a project has been selected.
+     *
+     * @component
+     * @param {Props} props - The properties passed to the component.
+     * @returns {JSX.Element} Returns the rendered JSX element for the widget content.
+     */
+    protected WidgetContent: React.FC<{ projectSelected: boolean }> = ({projectSelected}) => {
         const header = `You have not selected a project for checking. Either select an existing checking project or create a new one.`;
         return (
             <div id="widget-container">
@@ -95,7 +109,7 @@ export class StartCheckingWidget extends ReactWidget {
                     id="selectProjectButton"
                     className="theia-button secondary"
                     title="Select Existing Project"
-                    onClick={_a => this.selectExistingProject()}
+                    onClick={() => this.selectExistingProject()}
                 >
                     Select Existing Project
                 </button>
@@ -104,36 +118,35 @@ export class StartCheckingWidget extends ReactWidget {
                     id="newProjectButton"
                     className="theia-button secondary"
                     title="Create New Project"
-                    onClick={_a => this.createNewProject()}
+                    onClick={() => this.createNewProject()}
                 >
                     Create New Project
                 </button>
-                {
-                    projectSelected &&
-                  <>
-                  <hr/>
-                      <button
-                        id="openTnotesButton"
-                        className="theia-button secondary"
-                        title="Check translationNotes"
-                        onClick={_a => this.executeVSCodeCommand("checking-extension.checkTNotes")}
-                      >
-                        Check translationNotes
-                      </button>
-                  <hr/>
-                    <button
-                      id="openTwordsButton"
-                      className="theia-button secondary"
-                      title="Check translationWords"
-                      onClick={_a => this.executeVSCodeCommand("checking-extension.checkTWords")}
-                    >
-                      Check translationWords
-                    </button>
-                  </>
-                }
+                { projectSelected && (
+                    <>
+                        <hr/>
+                        <button
+                            id="openTnotesButton"
+                            className="theia-button secondary"
+                            title="Check translationNotes"
+                            onClick={() => this.executeVSCodeCommand("checking-extension.checkTNotes")}
+                        >
+                            Check translationNotes
+                        </button>
+                        <hr/>
+                        <button
+                            id="openTwordsButton"
+                            className="theia-button secondary"
+                            title="Check translationWords"
+                            onClick={() => this.executeVSCodeCommand("checking-extension.checkTWords")}
+                        >
+                            Check translationWords
+                        </button>
+                    </>
+                )}
             </div>
         );
-    }
+    };
 
 
 // Then you can execute the command
