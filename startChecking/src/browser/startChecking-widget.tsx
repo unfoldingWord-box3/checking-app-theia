@@ -105,6 +105,18 @@ export class StartCheckingWidget extends ReactWidget {
         })
     }
 
+    protected getCheckingTabCount(editorData: object[]): number {
+        let count = 0;
+        for (const editor of editorData) {
+            // @ts-ignore
+            const label = editor.label;
+            if (label.includes('.tn_checking') || label.includes('.twl_checking')) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     protected registerCommandHandlers(): void {
         // Create a disposable for the command handler
         const disposable = this.commandService.onDidExecuteCommand(e => {
@@ -114,6 +126,8 @@ export class StartCheckingWidget extends ReactWidget {
                 try {
                     const editorData = JSON.parse(e.args[0]);
                     console.log('startingChecking.updateWidgetEditorInfo editors', editorData)
+                    const editorCount = this.getCheckingTabCount(editorData);
+                    console.log('startingChecking.updateWidgetEditorInfo editorCount', editorCount)
                 } catch (e) {
                     console.error('startingChecking.updateWidgetEditorInfo error:', e)
                 }
