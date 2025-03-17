@@ -48,6 +48,24 @@ export class StartCheckingContribution extends AbstractViewContribution<StartChe
         commands.registerCommand(StartCheckingCommand, {
             execute: () => super.openView({ activate: false, reveal: true })
         });
+        // Register VS Code command
+        commands.registerCommand({
+            id: 'checking-extension.currentEditorTabs', // VS Code command ID
+            label: 'Updated Editor Tabs'
+        }, {
+            execute: (jsonData: string) => {
+                console.log(`checking-extension.currentEditorTabs - VS Code Updated Editor Tabs`, jsonData);
+                try {
+                    const editorData = JSON.parse(jsonData);
+                    console.log(`checking-extension.currentEditorTabs - VS Code Updated Editor Tabs`, editorData);
+                    // this.messageService.sendMessage(jsonData);
+                } catch (e) {
+                    console.error(`checking-extension.currentEditorTabs - data parse error`, e);
+                }
+                // Your implementation here
+                return true;
+            }
+        });
     }
 
     /**

@@ -26,6 +26,11 @@ export class StartCheckingWidget extends ReactWidget {
     // Visible label for the widget.
     static readonly LABEL = 'Start Checking';
 
+    // protected updateEditorTabsCallback: any = undefined;
+    //
+    // @inject(StartCheckingMessageService)
+    // protected readonly startCheckingMessageService: StartCheckingMessageService;
+
     // Message service for displaying alerts, notifications, or feedback to the user.
     @inject(MessageService)
     protected readonly messageService!: MessageService;
@@ -74,7 +79,35 @@ export class StartCheckingWidget extends ReactWidget {
         this.title.closable = true; // Allows the widget to be closed by the user.
         this.title.iconClass = 'fa fa-external-link'; // Sets an icon class for the widget header.
         this.update(); // Updates the UI to reflect any changes.
+        
+        // // Subscribe to message events
+        // this.startCheckingMessageService.onMessage(jsonData => {
+        //     this.handleStartCheckingMessage(jsonData);
+        //     this.update();
+        // });
+
+        // delay(5000).then(async () => {
+        //     try {
+        //         console.log(`starting checking-extension.listEditorTabs`)
+        //         await this.executeVSCodeCommand("checking-extension.listEditorTabs")
+        //         console.log('checking-extension.listEditorTabs finished')
+        //     } catch (e) {
+        //         console.error(`checking-extension.listEditorTabs error:`, e)
+        //     }
+        // })
     }
+
+    // protected handleStartCheckingMessage(jsonData: string): void {
+    //     try {
+    //         const editorData = JSON.parse(jsonData);
+    //         console.log(`startChecking-widget.handleStartCheckingMessage - VS Code Updated Editor Tabs`, editorData);
+    //         // const callback = this.updateEditorTabsCallback;
+    //         // const editorCount = editorData?.length || 0;
+    //         // callback && callback(editorCount)
+    //     } catch (e) {
+    //         console.error(`startChecking-widget.handleStartCheckingMessage - data parse error for '${jsonData}'`, e);
+    //     }
+    // }
 
     /**
      * Renders the React-based content for the widget.
@@ -101,6 +134,16 @@ export class StartCheckingWidget extends ReactWidget {
      */
     protected WidgetContent: React.FC<{ projectSelected: boolean }> = ({projectSelected}) => {
         const header = `You have not selected a project for checking. Either select an existing checking project or create a new one.`;
+        // const projectSelected_ = projectSelected
+        //
+        // // const [ editorCount, setEditorCount ] =  React.useState(0);
+        // const noEditorOpen = projectSelected_ // && !(editorCount > 0);
+        //
+        // // React.useEffect(() => {
+        // //     const updateEditorCount = (newCount: number) => { setEditorCount(newCount) }
+        // //     this.updateEditorTabsCallback = updateEditorCount
+        // // }, [])
+        
         return (
             <div id="widget-container">
                 <AlertMessage type="INFO" header={header} />
@@ -248,10 +291,6 @@ export class StartCheckingWidget extends ReactWidget {
                         if (validWorkspace) {
                             await this.workspaceService.open(folderUri);
                             this.messageService.info('Workspace opened: ' + folderUri.path.toString());
-
-                            // TODO - the open folder command above causes workspace to reload, so this does not work.
-                            //              perhaps there is a way to check if any tabs are open on startup?
-                            // await this.openFileTab(checkFileUri); // open checker
                         } else {
                             console.log(`${checkFileUri.path.toString()} is not valid checkData`, checkData)
                         }
