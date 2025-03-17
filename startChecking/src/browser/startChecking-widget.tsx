@@ -12,6 +12,7 @@ import {MetadataAlert} from "../MetadataAlertDialog";
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
 import { OpenerService } from '@theia/core/lib/browser';
 import {CommandRegistry} from "@theia/core/lib/common/command";
+import { CommandService } from '@theia/core/lib/common/command';
 
 /**
  * wraps timer in a Promise to make an async function that continues after a specific number of milliseconds.
@@ -36,6 +37,9 @@ export class StartCheckingWidget extends ReactWidget {
     static readonly ID = 'startChecking:widget';
     // Visible label for the widget.
     static readonly LABEL = 'Start Checking';
+
+    @inject(CommandService)
+    protected readonly commandService: CommandService;
 
     // Message service for displaying alerts, notifications, or feedback to the user.
     @inject(MessageService)
@@ -84,6 +88,10 @@ export class StartCheckingWidget extends ReactWidget {
         this.title.caption = StartCheckingWidget.LABEL; // Sets the widget tooltip caption.
         this.title.closable = true; // Allows the widget to be closed by the user.
         this.title.iconClass = 'fa fa-external-link'; // Sets an icon class for the widget header.
+
+        // Register command handlers
+        this.registerCommandHandlers();
+
         this.update(); // Updates the UI to reflect any changes.
 
         delay(5000).then(async () => {
@@ -96,6 +104,32 @@ export class StartCheckingWidget extends ReactWidget {
             }
         })
     }
+
+    protected registerCommandHandlers(): void {
+        // Create a disposable for the command handler
+        const disposable = this.commandService.onDidExecuteCommand(e => {
+            if (e.commandId === 'startingChecking.updateWidgetEditorInfo' && e.args) {
+                console.log('startingChecking.updateWidgetEditorInfo', e.args)
+                try {
+                    const editorData = JSON.parse(e.args[0]);
+                    console.log('startingChecking.updateWidgetEditorInfo editors', editorData)
+                } catch (e) {
+                    console.error('startingChecking.updateWidgetEditorInfo error:', e)
+                }
+            }
+        });
+
+        // Make sure to clean up when widget is disposed
+        this.toDispose.push(disposable);
+    }
+
+    // protected async requestData(): Promise<void> {
+    //     try {
+    //         await this.commandService.executeCommand(WIDGET_COMMAND.REQUEST_DATA);
+    //     } catch (error) {
+    //         console.error('Failed to request data', error);
+    //     }
+    // }
 
     /**
      * Renders the React-based content for the widget.

@@ -42,14 +42,14 @@ export class StartCheckingContribution extends AbstractViewContribution<StartChe
         reveal?: boolean;
      ```
      *
-     * @param commands
+     * @param registry
      */
-    registerCommands(commands: CommandRegistry): void {
-        commands.registerCommand(StartCheckingCommand, {
+    registerCommands(registry: CommandRegistry): void {
+        registry.registerCommand(StartCheckingCommand, {
             execute: () => super.openView({ activate: false, reveal: true })
         });
         // Register VS Code command
-        commands.registerCommand({
+        registry.registerCommand({
             id: 'checking-extension.currentEditorTabs', // VS Code command ID
             label: 'Updated Editor Tabs'
         }, {
@@ -58,7 +58,7 @@ export class StartCheckingContribution extends AbstractViewContribution<StartChe
                 try {
                     const editorData = JSON.parse(jsonData);
                     console.log(`checking-extension.currentEditorTabs - VS Code Updated Editor Tabs`, editorData);
-                    // this.messageService.sendMessage(jsonData);
+                    registry.executeCommand('startingChecking.updateWidgetEditorInfo', editorData);
                 } catch (e) {
                     console.error(`checking-extension.currentEditorTabs - data parse error`, e);
                 }
