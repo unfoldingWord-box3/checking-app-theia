@@ -108,7 +108,8 @@ export class StartCheckingWidget extends ReactWidget {
     protected registerCommandHandlers(): void {
         // Create a disposable for the command handler
         const disposable = this.commandService.onDidExecuteCommand(e => {
-            if (e.commandId === 'startingChecking.updateWidgetEditorInfo' && e.args) {
+            if ((e.commandId === 'startingChecking.updateWidgetEditorInfo' || e.commandId === 'checking-extension.currentEditorTabs')
+                    && e.args) {
                 console.log('startingChecking.updateWidgetEditorInfo', e.args)
                 try {
                     const editorData = JSON.parse(e.args[0]);
