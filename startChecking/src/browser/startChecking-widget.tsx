@@ -14,6 +14,17 @@ import { OpenerService } from '@theia/core/lib/browser';
 import {CommandRegistry} from "@theia/core/lib/common/command";
 
 /**
+ * wraps timer in a Promise to make an async function that continues after a specific number of milliseconds.
+ * @param {number} ms
+ * @returns {Promise<unknown>}
+ */
+export function delay(ms:number) {
+    return new Promise((resolve) =>
+        setTimeout(resolve, ms)
+    );
+}
+
+/**
  * The `StartCheckingWidget` class is a React-based widget that is used to prompt the user
  * to either select an existing project or create a new one for "checking" operations.
  *
@@ -25,11 +36,6 @@ export class StartCheckingWidget extends ReactWidget {
     static readonly ID = 'startChecking:widget';
     // Visible label for the widget.
     static readonly LABEL = 'Start Checking';
-
-    // protected updateEditorTabsCallback: any = undefined;
-    //
-    // @inject(StartCheckingMessageService)
-    // protected readonly startCheckingMessageService: StartCheckingMessageService;
 
     // Message service for displaying alerts, notifications, or feedback to the user.
     @inject(MessageService)
@@ -79,35 +85,17 @@ export class StartCheckingWidget extends ReactWidget {
         this.title.closable = true; // Allows the widget to be closed by the user.
         this.title.iconClass = 'fa fa-external-link'; // Sets an icon class for the widget header.
         this.update(); // Updates the UI to reflect any changes.
-        
-        // // Subscribe to message events
-        // this.startCheckingMessageService.onMessage(jsonData => {
-        //     this.handleStartCheckingMessage(jsonData);
-        //     this.update();
-        // });
 
-        // delay(5000).then(async () => {
-        //     try {
-        //         console.log(`starting checking-extension.listEditorTabs`)
-        //         await this.executeVSCodeCommand("checking-extension.listEditorTabs")
-        //         console.log('checking-extension.listEditorTabs finished')
-        //     } catch (e) {
-        //         console.error(`checking-extension.listEditorTabs error:`, e)
-        //     }
-        // })
+        delay(5000).then(async () => {
+            try {
+                console.log(`starting checking-extension.listEditorTabs`)
+                await this.executeVSCodeCommand("checking-extension.listEditorTabs")
+                console.log('checking-extension.listEditorTabs finished')
+            } catch (e) {
+                console.error(`checking-extension.listEditorTabs error:`, e)
+            }
+        })
     }
-
-    // protected handleStartCheckingMessage(jsonData: string): void {
-    //     try {
-    //         const editorData = JSON.parse(jsonData);
-    //         console.log(`startChecking-widget.handleStartCheckingMessage - VS Code Updated Editor Tabs`, editorData);
-    //         // const callback = this.updateEditorTabsCallback;
-    //         // const editorCount = editorData?.length || 0;
-    //         // callback && callback(editorCount)
-    //     } catch (e) {
-    //         console.error(`startChecking-widget.handleStartCheckingMessage - data parse error for '${jsonData}'`, e);
-    //     }
-    // }
 
     /**
      * Renders the React-based content for the widget.

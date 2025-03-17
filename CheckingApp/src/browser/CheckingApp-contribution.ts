@@ -6,17 +6,6 @@ import { EditorManager } from '@theia/editor/lib/browser';
 import { DisposableCollection } from '@theia/core';
 
 /**
- * wraps timer in a Promise to make an async function that continues after a specific number of milliseconds.
- * @param {number} ms
- * @returns {Promise<unknown>}
- */
-export function delay(ms:number) {
-    return new Promise((resolve) =>
-        setTimeout(resolve, ms)
-    );
-}
-
-/**
  * The `CheckingAppContribution` class implements the `FrontendApplicationContribution` interface
  * to handle the application lifecycle events and provide functionality related to the workspace and widgets.
  * It initializes the application behavior at startup, ensuring proper handling of cases where no workspace is selected.
@@ -163,11 +152,5 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
             await this.applicationShell.addWidget(widget, { area: 'main' });
             await this.applicationShell.activateWidget(widget.id);
         }
-        
-        delay(10000).then(() => { // delay for editors to open
-            const editors = this.getDetailedOpenEditors();
-
-            console.log('CheckingAppContribution.onDidInitializeLayout() - Editors: ', editors);
-        })
     }
 }
