@@ -41,7 +41,7 @@
   },
   "theiaPluginsDir": "plugins",
   "theiaPlugins": {
-    "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.17/checking-extension-0.9.17.vsix"
+    "checking-extension": "https://github.com/unfoldingWord-box3/checking-extension/releases/download/v0.9.19/checking-extension-0.9.19.vsix"
   },
   "workspaces": [
     "startChecking", "CheckingApp", "browser-app", "electron-app"

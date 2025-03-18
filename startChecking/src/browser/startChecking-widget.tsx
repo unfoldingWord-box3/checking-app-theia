@@ -12,6 +12,18 @@ import {MetadataAlert} from "../MetadataAlertDialog";
 import { EnvVariablesServer } from '@theia/core/lib/common/env-variables';
 import { OpenerService } from '@theia/core/lib/browser';
 import {CommandRegistry} from "@theia/core/lib/common/command";
+import { CommandService } from '@theia/core/lib/common/command';
+
+/**
+ * wraps timer in a Promise to make an async function that continues after a specific number of milliseconds.
+ * @param {number} ms
+ * @returns {Promise<unknown>}
+ */
+export function delay(ms:number) {
+    return new Promise((resolve) =>
+        setTimeout(resolve, ms)
+    );
+}
 
 /**
  * The `StartCheckingWidget` class is a React-based widget that is used to prompt the user
@@ -25,6 +37,13 @@ export class StartCheckingWidget extends ReactWidget {
     static readonly ID = 'startChecking:widget';
     // Visible label for the widget.
     static readonly LABEL = 'Start Checking';
+
+    // these variables are updated by widget component
+    protected updateEditorTabsCallback: any = undefined;
+    protected updateEditorCurrentCount: number = 0;
+
+    @inject(CommandService)
+    protected readonly commandService: CommandService;
 
     // Message service for displaying alerts, notifications, or feedback to the user.
     @inject(MessageService)
@@ -53,8 +72,7 @@ export class StartCheckingWidget extends ReactWidget {
     // inject the CommandRegistry
     @inject(CommandRegistry)
     protected readonly commandRegistry: CommandRegistry;
-
-
+    
     /**
      * Initializes the widget after its construction using the `@postConstruct` lifecycle hook.
      * Calls the `doInit` method to configure widget properties.
@@ -74,10 +92,61 @@ export class StartCheckingWidget extends ReactWidget {
         this.title.caption = StartCheckingWidget.LABEL; // Sets the widget tooltip caption.
         this.title.closable = true; // Allows the widget to be closed by the user.
         this.title.iconClass = 'fa fa-external-link'; // Sets an icon class for the widget header.
+
+        // Register command handlers
+        this.registerCommandHandlers();
+
         this.update(); // Updates the UI to reflect any changes.
+
+        delay(5000).then(async () => {
+            try {
+                console.log(`starting checking-extension.listEditorTabs`)
+                await this.executeVSCodeCommand("checking-extension.listEditorTabs")
+                console.log('checking-extension.listEditorTabs finished')
+            } catch (e) {
+                console.error(`checking-extension.listEditorTabs error:`, e)
+            }
+        })
     }
 
-    
+    protected getCheckingTabCount(editorData: object[]): number {
+        let count = 0;
+        for (const editor of editorData) {
+            // @ts-ignore
+            const label = editor.label;
+            if (label.includes('.tn_check') || label.includes('.twl_check')) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    protected registerCommandHandlers(): void {
+        // Create a disposable for the command handler
+        const disposable = this.commandService.onDidExecuteCommand(e => {
+            // TRICKY: not sure why, but message is being forwarded to widget as checking-extension.currentEditorTabs rather than startingChecking.updateWidgetEditorInfo, so for now we handle both
+            if ((e.commandId === 'startingChecking.updateWidgetEditorInfo' || e.commandId === 'checking-extension.currentEditorTabs')
+                    && e.args) {
+                console.log('startingChecking.updateWidgetEditorInfo', e.args)
+                try {
+                    const editorData = JSON.parse(e.args[0]);
+                    console.log('startingChecking.updateWidgetEditorInfo editors', editorData)
+                    const editorCount = this.getCheckingTabCount(editorData);
+                    console.log('startingChecking.updateWidgetEditorInfo editorCount', editorCount)
+                    if (this.updateEditorCurrentCount != editorCount) { // if editor tab count has changed, then update
+                        const setEditorCount = this.updateEditorTabsCallback;
+                        setEditorCount && setEditorCount(editorCount)
+                    }
+                } catch (e) {
+                    console.error('startingChecking.updateWidgetEditorInfo error:', e)
+                }
+            }
+        });
+
+        // Make sure to clean up when widget is disposed
+        this.toDispose.push(disposable);
+    }
+
     /**
      * Renders the React-based content for the widget.
      * This includes a message prompting the user to select or create a project,
@@ -86,9 +155,31 @@ export class StartCheckingWidget extends ReactWidget {
      * @returns {React.ReactElement} The rendered UI.
      */
     render(): React.ReactElement {
-        const projectSelected = this.workspaceService.opened
-        
+        return <this.WidgetContent projectSelected={this.workspaceService.opened}/>;
+    }
+
+    /**
+     * WidgetContent is a React functional component that renders a widget
+     * for managing project-related actions such as selecting an existing project,
+     * creating a new one, or performing checks on translation resources if a project is selected.
+     *
+     * @typedef {Object} Props
+     * @property {boolean} projectSelected - Indicates whether a project has been selected.
+     *
+     * @component
+     * @param {Props} props - The properties passed to the component.
+     * @returns {JSX.Element} Returns the rendered JSX element for the widget content.
+     */
+    protected WidgetContent: React.FC<{ projectSelected: boolean }> = ({projectSelected}) => {
         const header = `You have not selected a project for checking. Either select an existing checking project or create a new one.`;
+        const projectSelected_ = projectSelected
+
+        const [ editorCount, setEditorCount ] =  React.useState(0);
+        const noEditorOpen = projectSelected_ && !(editorCount > 0);
+        
+        this.updateEditorTabsCallback = setEditorCount
+        this.updateEditorCurrentCount = editorCount
+        
         return (
             <div id="widget-container">
                 <AlertMessage type="INFO" header={header} />
@@ -97,7 +188,7 @@ export class StartCheckingWidget extends ReactWidget {
                     id="selectProjectButton"
                     className="theia-button secondary"
                     title="Select Existing Project"
-                    onClick={_a => this.selectExistingProject()}
+                    onClick={() => this.selectExistingProject()}
                 >
                     Select Existing Project
                 </button>
@@ -106,36 +197,35 @@ export class StartCheckingWidget extends ReactWidget {
                     id="newProjectButton"
                     className="theia-button secondary"
                     title="Create New Project"
-                    onClick={_a => this.createNewProject()}
+                    onClick={() => this.createNewProject()}
                 >
                     Create New Project
                 </button>
-                {
-                    projectSelected &&
-                  <>
-                  <hr/>
-                      <button
-                        id="openTnotesButton"
-                        className="theia-button secondary"
-                        title="Check translationNotes"
-                        onClick={_a => this.executeVSCodeCommand("checking-extension.checkTNotes")}
-                      >
-                        Check translationNotes
-                      </button>
-                  <hr/>
-                    <button
-                      id="openTwordsButton"
-                      className="theia-button secondary"
-                      title="Check translationWords"
-                      onClick={_a => this.executeVSCodeCommand("checking-extension.checkTWords")}
-                    >
-                      Check translationWords
-                    </button>
-                  </>
-                }
+                { noEditorOpen && (
+                    <>
+                        <hr/>
+                        <button
+                            id="openTnotesButton"
+                            className="theia-button secondary"
+                            title="Check translationNotes"
+                            onClick={() => this.executeVSCodeCommand("checking-extension.checkTNotes")}
+                        >
+                            Check translationNotes
+                        </button>
+                        <hr/>
+                        <button
+                            id="openTwordsButton"
+                            className="theia-button secondary"
+                            title="Check translationWords"
+                            onClick={() => this.executeVSCodeCommand("checking-extension.checkTWords")}
+                        >
+                            Check translationWords
+                        </button>
+                    </>
+                )}
             </div>
         );
-    }
+    };
 
 
 // Then you can execute the command
@@ -237,10 +327,6 @@ export class StartCheckingWidget extends ReactWidget {
                         if (validWorkspace) {
                             await this.workspaceService.open(folderUri);
                             this.messageService.info('Workspace opened: ' + folderUri.path.toString());
-
-                            // TODO - the open folder command above causes workspace to reload, so this does not work.
-                            //              perhaps there is a way to check if any tabs are open on startup?
-                            // await this.openFileTab(checkFileUri); // open checker
                         } else {
                             console.log(`${checkFileUri.path.toString()} is not valid checkData`, checkData)
                         }
