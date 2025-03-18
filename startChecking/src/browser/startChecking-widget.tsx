@@ -299,7 +299,7 @@ export class StartCheckingWidget extends ReactWidget {
 
         const relativePath = 'translationCore/otherProjects';
         // Example with URI path utilities:
-        const fileUri = new URI(homeDir).resolve(relativePath);
+        const fileUri = URI.fromFilePath(homeDir).resolve(relativePath);
 
         try {
             defaultFolder = await this.fileService.resolve(fileUri);
@@ -308,7 +308,7 @@ export class StartCheckingWidget extends ReactWidget {
             console.error(`Error fetching FileStat for ${fileUri.path}:`, error);
             
             try {
-                defaultFolder = await this.fileService.resolve(new URI(homeDir));
+                defaultFolder = await this.fileService.resolve(URI.fromFilePath(homeDir));
                 console.log(`FileStat: for ${fileUri.path}`, defaultFolder);
             } catch (error) {
                 console.error(`Error fetching FileStat for ${fileUri.path}:`, error);
@@ -408,8 +408,8 @@ export class StartCheckingWidget extends ReactWidget {
      */
     protected async createNewProject(): Promise<void> {
         this.messageService.info('createNewProject');
-        const homeDir = await this.getHomeFolder()
-        const folderPath = new URI(homeDir).resolve(`translationCore/otherProjects/EMPTY`);
+        const homeDir = await this.getHomeFolder() || ''
+        const folderPath = URI.fromFilePath(homeDir).resolve(`translationCore/otherProjects/EMPTY`);
 
         // Ensure the folder exists
         let folderExists = false;
@@ -428,6 +428,7 @@ export class StartCheckingWidget extends ReactWidget {
                 folderExists = true;
             } catch (createError) {
                 console.error(`Failed to create folder at: ${folderPath.path.toString()}`, createError);
+                this.messageService.error(`Failed to create folder at: ${folderPath.path.toString()}`);
             }
         }
 
@@ -443,6 +444,7 @@ export class StartCheckingWidget extends ReactWidget {
                 await this.openFileTab(fileUri);
             } catch (error) {
                 console.error(`Failed to write file at: ${folderPath}/check.txt`, error);
+                this.messageService.error(`Failed to write file at: ${folderPath}/check.txt`);
             }
         }
     }
