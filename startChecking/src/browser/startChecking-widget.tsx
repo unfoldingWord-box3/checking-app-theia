@@ -114,7 +114,7 @@ export class StartCheckingWidget extends ReactWidget {
         for (const editor of editorData) {
             // @ts-ignore
             const label = editor.label;
-            if (label.includes('.tn_checking') || label.includes('.twl_checking')) {
+            if (label.includes('.tn_check') || label.includes('.twl_check')) {
                 count++;
             }
         }
