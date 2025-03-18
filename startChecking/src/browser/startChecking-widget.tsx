@@ -98,7 +98,7 @@ export class StartCheckingWidget extends ReactWidget {
 
         this.update(); // Updates the UI to reflect any changes.
 
-        delay(5000).then(async () => {
+        delay(4000).then(async () => {
             try {
                 console.log(`starting checking-extension.listEditorTabs`)
                 await this.executeVSCodeCommand("checking-extension.listEditorTabs")
@@ -247,7 +247,7 @@ export class StartCheckingWidget extends ReactWidget {
      */
     protected async readMetadata(workspaceUri: URI): Promise<any> {
         try {
-            const metadataUri = new URI(`${workspaceUri}/metadata.json`);
+            const metadataUri = workspaceUri.resolve('metadata.json');
             console.log('metadataUri:', metadataUri);
 
             // Read the contents of metadata.json
@@ -289,18 +289,38 @@ export class StartCheckingWidget extends ReactWidget {
      */
     protected async selectExistingProject(): Promise<void> {
         const homeDir = await this.getHomeFolder()
+        let defaultFolder
+
+        if (!homeDir) {
+            console.error('Could not determine users home directory');
+            this.messageService.error('Could not determine users home directory');
+            return;
+        }
+
         const relativePath = 'translationCore/otherProjects';
-        const absolutePath = `${homeDir}/${relativePath}`; // Construct absolute path
-        const fileUri = new URI(absolutePath);      // Convert the absolute path to a URI
-        let defaultFolder;
+        // Example with URI path utilities:
+        const fileUri = new URI(homeDir).resolve(relativePath);
 
         try {
             defaultFolder = await this.fileService.resolve(fileUri);
-            console.log(`FileStat: for ${absolutePath}`, defaultFolder);
+            console.log(`FileStat: for ${fileUri.path}`, defaultFolder);
         } catch (error) {
-            console.error(`Error fetching FileStat for ${absolutePath}:`, error);
+            console.error(`Error fetching FileStat for ${fileUri.path}:`, error);
+            
+            try {
+                defaultFolder = await this.fileService.resolve(new URI(homeDir));
+                console.log(`FileStat: for ${fileUri.path}`, defaultFolder);
+            } catch (error) {
+                console.error(`Error fetching FileStat for ${fileUri.path}:`, error);
+            }
         }
 
+        if (!homeDir) {
+            console.error('Could not determine default directory');
+            this.messageService.error('Could not determine default directory');
+            return;
+        }
+        
         const props: OpenFileDialogProps = {
             canSelectFolders: true,
             canSelectFiles: false,
@@ -388,8 +408,8 @@ export class StartCheckingWidget extends ReactWidget {
      */
     protected async createNewProject(): Promise<void> {
         this.messageService.info('createNewProject');
-        const home = await this.getHomeFolder()
-        const folderPath = new URI(`${home}/translationCore/otherProjects/EMPTY`);
+        const homeDir = await this.getHomeFolder()
+        const folderPath = new URI(homeDir).resolve(`translationCore/otherProjects/EMPTY`);
 
         // Ensure the folder exists
         let folderExists = false;
@@ -415,7 +435,7 @@ export class StartCheckingWidget extends ReactWidget {
             console.log('Folder verified and/or created successfully!');
             
             try {
-                const fileUri = new URI(`${folderPath}/empty.twl_check`);
+                const fileUri = folderPath.resolve(`empty.twl_check`);
                 const emptyJson = '{ }';
                 await this.fileService.write(fileUri, emptyJson);
                 console.log(`File written successfully at: ${fileUri.path}`);
