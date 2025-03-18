@@ -38,6 +38,10 @@ export class StartCheckingWidget extends ReactWidget {
     // Visible label for the widget.
     static readonly LABEL = 'Start Checking';
 
+    // these variables are updated by widget component
+    protected updateEditorTabsCallback: any = undefined;
+    protected updateEditorCurrentCount: number = 0;
+
     @inject(CommandService)
     protected readonly commandService: CommandService;
 
@@ -120,6 +124,7 @@ export class StartCheckingWidget extends ReactWidget {
     protected registerCommandHandlers(): void {
         // Create a disposable for the command handler
         const disposable = this.commandService.onDidExecuteCommand(e => {
+            // TRICKY: not sure why, but message is being forwarded to widget as checking-extension.currentEditorTabs rather than startingChecking.updateWidgetEditorInfo, so for now we handle both
             if ((e.commandId === 'startingChecking.updateWidgetEditorInfo' || e.commandId === 'checking-extension.currentEditorTabs')
                     && e.args) {
                 console.log('startingChecking.updateWidgetEditorInfo', e.args)
@@ -128,6 +133,10 @@ export class StartCheckingWidget extends ReactWidget {
                     console.log('startingChecking.updateWidgetEditorInfo editors', editorData)
                     const editorCount = this.getCheckingTabCount(editorData);
                     console.log('startingChecking.updateWidgetEditorInfo editorCount', editorCount)
+                    if (this.updateEditorCurrentCount != editorCount) { // if editor tab count has changed, then update
+                        const setEditorCount = this.updateEditorTabsCallback;
+                        setEditorCount && setEditorCount(editorCount)
+                    }
                 } catch (e) {
                     console.error('startingChecking.updateWidgetEditorInfo error:', e)
                 }
@@ -137,14 +146,6 @@ export class StartCheckingWidget extends ReactWidget {
         // Make sure to clean up when widget is disposed
         this.toDispose.push(disposable);
     }
-
-    // protected async requestData(): Promise<void> {
-    //     try {
-    //         await this.commandService.executeCommand(WIDGET_COMMAND.REQUEST_DATA);
-    //     } catch (error) {
-    //         console.error('Failed to request data', error);
-    //     }
-    // }
 
     /**
      * Renders the React-based content for the widget.
@@ -171,15 +172,13 @@ export class StartCheckingWidget extends ReactWidget {
      */
     protected WidgetContent: React.FC<{ projectSelected: boolean }> = ({projectSelected}) => {
         const header = `You have not selected a project for checking. Either select an existing checking project or create a new one.`;
-        // const projectSelected_ = projectSelected
-        //
-        // // const [ editorCount, setEditorCount ] =  React.useState(0);
-        // const noEditorOpen = projectSelected_ // && !(editorCount > 0);
-        //
-        // // React.useEffect(() => {
-        // //     const updateEditorCount = (newCount: number) => { setEditorCount(newCount) }
-        // //     this.updateEditorTabsCallback = updateEditorCount
-        // // }, [])
+        const projectSelected_ = projectSelected
+
+        const [ editorCount, setEditorCount ] =  React.useState(0);
+        const noEditorOpen = projectSelected_ && !(editorCount > 0);
+        
+        this.updateEditorTabsCallback = setEditorCount
+        this.updateEditorCurrentCount = editorCount
         
         return (
             <div id="widget-container">
@@ -202,7 +201,7 @@ export class StartCheckingWidget extends ReactWidget {
                 >
                     Create New Project
                 </button>
-                { projectSelected && (
+                { noEditorOpen && (
                     <>
                         <hr/>
                         <button

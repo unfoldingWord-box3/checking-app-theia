@@ -58,6 +58,7 @@ export class StartCheckingContribution extends AbstractViewContribution<StartChe
                 try {
                     const editorData = JSON.parse(jsonData);
                     console.log(`checking-extension.currentEditorTabs - VS Code Updated Editor Tabs`, editorData);
+                    // TRICKY: not sure why, but message is forwarded to widget as checking-extension.currentEditorTabs rather than the command given
                     registry.executeCommand('startingChecking.updateWidgetEditorInfo', editorData);
                 } catch (e) {
                     console.error(`checking-extension.currentEditorTabs - data parse error`, e);
