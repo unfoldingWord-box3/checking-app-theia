@@ -97,6 +97,7 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
             const widget = await this.widgetManager.getOrCreateWidget('startChecking:widget');
             await this.applicationShell.addWidget(widget, { area: 'main' });
             await this.applicationShell.activateWidget(widget.id);
+            await this.applicationShell.expandPanel('left');
         }
     }
 }
