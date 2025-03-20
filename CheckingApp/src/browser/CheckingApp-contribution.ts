@@ -88,15 +88,15 @@ export class CheckingAppContribution implements FrontendApplicationContribution 
         // Remove unwanted tabs
         await this.removeLeftSidebarTabs(removeTabs);
 
-        const widget = await this.widgetManager.getOrCreateWidget('startChecking:widget');
-        await this.applicationShell.addWidget(widget, { area: 'main' });
-        await this.applicationShell.activateWidget(widget.id);
-
         if (this.workspaceService.opened) {
             console.log('CheckingAppContribution.onDidInitializeLayout() - A workspace is selected.');
+            // Collapse the left area (where explorer is located)
             await this.applicationShell.collapsePanel('left');
         } else {
             console.log('CheckingAppContribution.onDidInitializeLayout() - No workspace selected - opening start checking widget.');
+            const widget = await this.widgetManager.getOrCreateWidget('startChecking:widget');
+            await this.applicationShell.addWidget(widget, { area: 'main' });
+            await this.applicationShell.activateWidget(widget.id);
             await this.applicationShell.expandPanel('left');
         }
     }
